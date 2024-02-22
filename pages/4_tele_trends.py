@@ -1,7 +1,7 @@
 import streamlit as st
 import Calc_Web as cw
 
-test = "St_Scouting\\app.csv"
+test = "app.csv"
 
 
 st.set_page_config(page_title="Team Tele Trends", page_icon="tropy")
