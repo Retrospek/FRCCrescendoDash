@@ -4,7 +4,7 @@ import Calc_Web as cw
 st.set_page_config(page_title="Team Statistics and Predictions", page_icon="tropy")
 
 st.sidebar.header("Team Select")
-test = "St_Scouting\\app.csv"
+test = "app.csv"
 data = cw.get_clean_data(csv= test)
 team_stats = cw.team_desc(Data=data)
 Red_Teams = st.sidebar.multiselect("3 Red Alliance Teams",team_stats['Team Number'].unique(), max_selections=3)
