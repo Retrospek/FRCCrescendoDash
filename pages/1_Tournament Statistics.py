@@ -2,7 +2,7 @@ import streamlit as st
 import Calc_Web as cw
 import pandas as pd
 
-test = "St_Scouting\\app.csv"
+test = "app.csv"
 any = "2024-Crescendo-FRC-2468\\data.csv"
 
 st.set_page_config(page_title="Tournament Statistics and Predictions", page_icon="tropy")
