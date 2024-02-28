@@ -307,19 +307,24 @@ def auto_paths(Data, teams):
 
     # Find if a robot is better at x
 def max_amp_spk(clean_data, team):
-    #def handle():
-    clean_data = clean_data.loc[clean_data['team_#'] == team[0]]
-    tota = clean_data[['AMPLIFIED', 'amplified_closed', 'speaker_scored_amped']]
-    tota = tota.dropna()
-    amp_start = tota['AMPLIFIED']
-    amp_end = tota['amplified_closed']
-    spk_scr_amped = tota['speaker_scored_amped']
-    for inst in range(len(tota)):
-        start = amp_start[inst]
-        end = amp_end[inst]
-        st.write(start)
-        st.write(end)
+    maxes = {
 
+    }
+    for tm in team:
+        team_df = clean_data.loc[clean_data['team_#'] == tm]
+        maxes.update({f"{tm}" : max})
+        amplif_spks = []
+
+        for row in team_df:
+            amplifieds = row['AMPLIFIED'].split('|') if '|' in row['AMPLIFIED'] else [row['AMPLIFIED']]
+            stop_amps = row['amplified_closed'].split('|') if '|' in row['amplified_closed'] else [row['amplified_closed']]
+            spks = row['speaker_scored_amped'].split('|') if '|' in row['speaker_scored_amped'] else [row['speaker_scored_amp']]
+            for i in range(len(amplifieds)):
+                if i <= len(stop_amps) - 1:
+                    amplif_spks.append(len([x for x in spks if amplif_spks[i] <= x <= stop_amps[i]]))
+    st.write(max(amplif_spks))
+
+    
 
 def node_graph_picklist(team_stats):
     team_to = {
