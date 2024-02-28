@@ -312,7 +312,6 @@ def max_amp_spk(clean_data, team):
     }
     for tm in team:
         team_df = clean_data.loc[clean_data['team_#'] == tm]
-        maxes.update({f"{tm}" : max})
         amplif_spks = []
 
         for row in team_df:
@@ -322,7 +321,9 @@ def max_amp_spk(clean_data, team):
             for i in range(len(amplifieds)):
                 if i <= len(stop_amps) - 1:
                     amplif_spks.append(len([x for x in spks if amplif_spks[i] <= x <= stop_amps[i]]))
-    st.write(max(amplif_spks))
+        maxes.update({f"{tm}" : max(amplif_spks)})
+
+    st.write(maxes)
 
     
 
