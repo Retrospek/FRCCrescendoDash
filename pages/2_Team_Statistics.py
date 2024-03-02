@@ -28,13 +28,11 @@ try:
 except:
     st.markdown("# Data for one of the teams is insufficient")
 
-'''st.markdown("# Team AutoPaths")
+st.markdown("# Team AutoPaths")
 
 auto_path = cw.auto_paths(Data=data, teams=team_auto)
 st.plotly_chart(auto_path)
 
-st.markdown(f"# {max_speaker} max speaker notes in a amplified")
-max_spk_amped = cw.max_amp_spk(clean_data=data, team=max_speaker)
-st.write(max_spk_amped)'''
+
 
 
