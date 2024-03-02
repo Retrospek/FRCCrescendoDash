@@ -28,10 +28,7 @@ try:
 except:
     st.markdown("# Data for one of the teams is insufficient")
 
-st.markdown("# Team AutoPaths")
 
-auto_path = cw.auto_paths(Data=data, teams=team_auto)
-st.plotly_chart(auto_path)
 
 
 
