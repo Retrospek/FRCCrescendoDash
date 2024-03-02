@@ -105,8 +105,8 @@ def team_desc(Data):
     team_stats['Win/Total'].fillna(0, inplace=True)
     for j in range(len(team_stats)):
         #if team_stats.at[j, 'Team Number'] == 1234:    
-        team_stats.loc[j,'Predicted Score'] = team_stats.at[j, 'AVG_AMPLIF_TELE'] * 5 + team_stats.at[j, 'AVG_AMP_AUTO']*2 + team_stats.at[j, 'AVG_SPEAKER_AUTO']*5 + team_stats.at[j, 'AVG_AMP_TELE']*1 + team_stats.at[j, 'AVG_SPEAKER_TELE']*2
-        team_stats.loc[j, 'Score Variability'] = math.sqrt(pow(team_stats.at[j, 'STD_AMPLIF_TELE'] * 5, 2) + pow(team_stats.at[j,'STD_AMP_AUTO']*2, 2) + pow(team_stats.at[j,'STD_SPEAKER_AUTO']*5, 2) + pow(team_stats.at[j,'STD_AMP_TELE']*1, 2) + pow(team_stats.at[j,'STD_SPEAKER_TELE'] * 2, 2) )
+        team_stats.loc[j,'Predicted Score'] = team_stats.at[j, 'AVG_AMP_AUTO']*2 + team_stats.at[j, 'AVG_SPEAKER_AUTO']*5 + team_stats.at[j, 'AVG_AMP_TELE']*1 + team_stats.at[j, 'AVG_SPEAKER_TELE']*2
+        team_stats.loc[j, 'Score Variability'] = math.sqrt(pow(team_stats.at[j,'STD_AMP_AUTO']*2, 2) + pow(team_stats.at[j,'STD_SPEAKER_AUTO']*5, 2) + pow(team_stats.at[j,'STD_AMP_TELE']*1, 2) + pow(team_stats.at[j,'STD_SPEAKER_TELE'] * 2, 2) )
         if pd.isna(team_stats.at[j, 'Score Variablity']):
             team_stats.loc[j, 'Score Variablity'] == 0
     return team_stats
