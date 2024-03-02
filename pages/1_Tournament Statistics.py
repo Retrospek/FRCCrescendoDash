@@ -7,6 +7,10 @@ any = "2024-Crescendo-FRC-2468\\data.csv"
 
 st.set_page_config(page_title="Tournament Statistics and Predictions", page_icon="tropy")
 
+if 'data' in st.session_state:
+    test = st.session_state['data']
+st.write(test)
+
 data = cw.get_clean_data(csv= test)
 team_stats = cw.team_desc(Data=data)
 bubble = cw.plot(team_stats=team_stats)
