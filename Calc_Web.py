@@ -24,7 +24,7 @@ from PIL import Image
 #'Scouting\Team_Analysis\default (1).csv'
 def get_clean_data(csv):
     default = pd.read_csv(filepath_or_buffer=csv, on_bad_lines= 'skip')
-    attributes = ['tele_spk_scored', 'tele_amp_scored']
+    attributes = ['tele_spk_scored', 'tele_amp_scored', 'speaker_scored_amped']
     for i in range(len(default)):
         for j in range(len(attributes)):
             if pd.isna(default.loc[i, attributes[j]]):# or len(default.at[i, attributes[j]]) == 0:
@@ -68,9 +68,11 @@ def team_desc(Data):
     team_stats.insert(6,'STD_SPEAKER_AUTO', 0)
     team_stats.insert(7,'STD_AMP_TELE', 0)
     team_stats.insert(8,'STD_SPEAKER_TELE', 0)
-    team_stats.insert(9, 'Predicted Score', 0)
-    team_stats.insert(10, 'Score Variablity', 0)
-    team_stats.insert(11, 'Win/Total', 0)
+    team_stats.insert(9, 'AVG_AMPLIF_TELE', 0)
+    team_stats.insert(10, 'STD_AMPLIF_TELE', 0)
+    team_stats.insert(11, 'Predicted Score', 0)
+    team_stats.insert(12, 'Score Variablity', 0)
+    team_stats.insert(13, 'Win/Total', 0)
     for i in range(len(team_stats)):
         team = team_stats.at[i, 'Team Number']
         Team_DF = Data.loc[Data['team_#'] == team]
@@ -80,25 +82,31 @@ def team_desc(Data):
         team_stats.loc[i, 'AVG_SPEAKER_AUTO'] = Team_DF['auto_spk_scored'].describe()[1]
         team_stats.loc[i, 'AVG_AMP_TELE'] = Team_DF['tele_amp_scored'].describe()[1]
         team_stats.loc[i, 'AVG_SPEAKER_TELE'] = Team_DF['tele_spk_scored'].describe()[1]
+        team_stats.loc[i, 'AVG_AMPLIF_TELE'] = Team_DF['speaker_scored_amped'].describe()[1]
 
         team_stats.loc[i, 'STD_AMP_AUTO'] = Team_DF['auto_amp_scored'].describe()[2]
         team_stats.loc[i, 'STD_SPEAKER_AUTO'] = Team_DF['auto_spk_scored'].describe()[2]
         team_stats.loc[i, 'STD_AMP_TELE'] = Team_DF['tele_amp_scored'].describe()[2]
         team_stats.loc[i, 'STD_SPEAKER_TELE'] = Team_DF['tele_spk_scored'].describe()[2]
+        team_stats.loc[i, 'STD_AMPLIF_TELE'] = Team_DF['speaker_scored_amped'].describe()[2]
+
+
         team_stats.loc[i, 'Win/Total'] = team_wins/team_total
     team_stats['AVG_AMP_AUTO'].fillna(0, inplace=True)
     team_stats['AVG_SPEAKER_AUTO'].fillna(0, inplace=True)
     team_stats['AVG_AMP_TELE'].fillna(0, inplace=True)
     team_stats['AVG_SPEAKER_TELE'].fillna(0, inplace=True)
+    team_stats['AVG_AMPLIF_TELE'].fillna(0, inplace=True)
     team_stats['STD_AMP_AUTO'].fillna(0, inplace=True)
     team_stats['STD_SPEAKER_AUTO'].fillna(0, inplace=True)
     team_stats['STD_AMP_TELE'].fillna(0, inplace=True)
     team_stats['STD_SPEAKER_TELE'].fillna(0, inplace=True)
+    team_stats['STD_AMPLIF_TELE'].fillna(0, inplace=True)
     team_stats['Win/Total'].fillna(0, inplace=True)
     for j in range(len(team_stats)):
         #if team_stats.at[j, 'Team Number'] == 1234:    
-        team_stats.loc[j,'Predicted Score'] = team_stats.at[j, 'AVG_AMP_AUTO']*2 + team_stats.at[j, 'AVG_SPEAKER_AUTO']*5 + team_stats.at[j, 'AVG_AMP_TELE']*1 + team_stats.at[j, 'AVG_SPEAKER_TELE']*2
-        team_stats.loc[j, 'Score Variability'] = math.sqrt(pow(team_stats.at[j,'STD_AMP_AUTO']*2, 2) + pow(team_stats.at[j,'STD_SPEAKER_AUTO']*5, 2) + pow(team_stats.at[j,'STD_AMP_TELE']*1, 2) + pow(team_stats.at[j,'STD_SPEAKER_TELE'] * 2, 2) )
+        team_stats.loc[j,'Predicted Score'] = team_stats.at[j, 'AVG_AMPLIF_TELE'] * 5 + team_stats.at[j, 'AVG_AMP_AUTO']*2 + team_stats.at[j, 'AVG_SPEAKER_AUTO']*5 + team_stats.at[j, 'AVG_AMP_TELE']*1 + team_stats.at[j, 'AVG_SPEAKER_TELE']*2
+        team_stats.loc[j, 'Score Variability'] = math.sqrt(pow(team_stats.at[j, 'STD_AMPLIF_TELE'], 2) + pow(team_stats.at[j,'STD_AMP_AUTO']*2, 2) + pow(team_stats.at[j,'STD_SPEAKER_AUTO']*5, 2) + pow(team_stats.at[j,'STD_AMP_TELE']*1, 2) + pow(team_stats.at[j,'STD_SPEAKER_TELE'] * 2, 2) )
         if pd.isna(team_stats.at[j, 'Score Variablity']):
             team_stats.loc[j, 'Score Variablity'] == 0
     return team_stats
@@ -201,7 +209,7 @@ def auto_paths(Data, teams):
     fig = go.Figure()
 
 
-    with open("Auto Path References.png", "rb") as img_file:
+    with open("Auto Path References (1).png", "rb") as img_file:
         img_base64 = base64.b64encode(img_file.read()).decode('ascii')
 
     fig.add_layout_image(
