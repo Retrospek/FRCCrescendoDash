@@ -23,7 +23,7 @@ from PIL import Image
 
 #'Scouting\Team_Analysis\default (1).csv'
 def get_clean_data(csv):
-    default = pd.read_csv(csv)
+    default = pd.read_csv(filepath_or_buffer=csv, on_bad_lines= 'skip')
     attributes = ['tele_spk_scored', 'tele_amp_scored']
     for i in range(len(default)):
         for j in range(len(attributes)):
@@ -49,20 +49,15 @@ def get_clean_data(csv):
             if pd.isna(default.loc[r, times[c]]):
                 default.at[r, times[c]] == [-1]
             else:
-                print("Inside else on line 32")
-                print("r;", r)
-                print("c;", c)
-                print("val;", default.at[r, times[c]])
-                print(default.at[r, "AMPLIFIED"])
-                print(default.at[r, 'amplified_closed'])
-                print(times[c])
                 try:
                     default.loc[r, times[c]] = default.at[r, times[c]].split('|')
                 except:
                     default.loc[r, times[c]] = [-1]
     return default
 #team_stats = pd.DataFrame(columns=['Team-Number', 'AVG_AMP_AUTO', 'AVG_SPEAKER_AUTO', 'AVG_AMP_TELE', 'AVG_SPEAKER_TELE', 'STD_AMP_AUTO', 'STD_SPEAKER_AUTO', 'STD_AMP_TELE', 'STD_SPEAKER_TELE' ])
+ 
 def team_desc(Data):
+    Data.dropna(subset='team_#',inplace=True) 
     team_numbers = Data['team_#'].unique()
     team_stats = pd.DataFrame(team_numbers, columns=['Team Number'])
     team_stats.insert(1,'AVG_AMP_AUTO', 0)
@@ -81,7 +76,6 @@ def team_desc(Data):
         Team_DF = Data.loc[Data['team_#'] == team]
         team_wins = len(Team_DF.loc[Team_DF['win'] == 'Yes'])
         team_total = len(Team_DF)
-        
         team_stats.loc[i, 'AVG_AMP_AUTO'] = Team_DF['auto_amp_scored'].describe()[1]
         team_stats.loc[i, 'AVG_SPEAKER_AUTO'] = Team_DF['auto_spk_scored'].describe()[1]
         team_stats.loc[i, 'AVG_AMP_TELE'] = Team_DF['tele_amp_scored'].describe()[1]
@@ -107,9 +101,8 @@ def team_desc(Data):
         team_stats.loc[j, 'Score Variability'] = math.sqrt(pow(team_stats.at[j,'STD_AMP_AUTO']*2, 2) + pow(team_stats.at[j,'STD_SPEAKER_AUTO']*5, 2) + pow(team_stats.at[j,'STD_AMP_TELE']*1, 2) + pow(team_stats.at[j,'STD_SPEAKER_TELE'] * 2, 2) )
         if pd.isna(team_stats.at[j, 'Score Variablity']):
             team_stats.loc[j, 'Score Variablity'] == 0
-
     return team_stats
-
+ 
 def match_prediction(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
 #print("Type your 6 teams in order from 0-9")
     BlueAllianceAvg = 0
@@ -119,6 +112,7 @@ def match_prediction(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
     asked_teams = [Red1, Red2, Red3, Blue1, Blue2, Blue3]
     asked_teams_avg = [0,0,0,0,0,0]
     asked_teams_std = [0,0,0,0,0,0]
+    
     for team in range(len(asked_teams)):   
         alliateam = team_stats.loc[team_stats['Team Number'] == asked_teams[team]]
         if team <= 2:
@@ -148,7 +142,7 @@ def match_prediction(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
     #Scouting\Team_Analysis\PointCalculator.py
 
 
-
+ 
 def plot(team_stats):
     avg_speaker = []
     avg_amp = []
@@ -184,6 +178,8 @@ def plot(team_stats):
     ###################################################################################################################
     # Analyze the best alliance setup
 
+
+ 
 def auto_paths(Data, teams):
     pickup_points = {
         "auto_note_3_pickup": (103, 250.1),
@@ -205,7 +201,7 @@ def auto_paths(Data, teams):
     fig = go.Figure()
 
 
-    with open("Auto Path References.png", "rb") as img_file:
+    with open("Auto Path References (1).png", "rb") as img_file:
         img_base64 = base64.b64encode(img_file.read()).decode('ascii')
 
     fig.add_layout_image(
@@ -306,27 +302,33 @@ def auto_paths(Data, teams):
             
 
     # Find if a robot is better at x
-def max_amp_spk(clean_data, team):
-    maxes = {
 
-    }
+ 
+def max_amp_spk(clean_data, team):
+    maxes = {}
+
     for tm in team:
         team_df = clean_data.loc[clean_data['team_#'] == tm]
         amplif_spks = []
 
-        for row in team_df:
-            amplifieds = row['AMPLIFIED'].split('|') if '|' in row['AMPLIFIED'] else [row['AMPLIFIED']]
-            stop_amps = row['amplified_closed'].split('|') if '|' in row['amplified_closed'] else [row['amplified_closed']]
-            spks = row['speaker_scored_amped'].split('|') if '|' in row['speaker_scored_amped'] else [row['speaker_scored_amp']]
+        for index, row in team_df.iterrows():  # Use iterrows() to iterate over rows
+            row.fillna(0, inplace=True)
+            amplifieds = row['AMPLIFIED'].split('|') if '|' in str(row['AMPLIFIED']) else [row['AMPLIFIED']]
+            stop_amps = row['amplified_closed'].split('|') if '|' in str(row['amplified_closed']) else [row['amplified_closed']]
+            spks = row['speaker_scored_amped'].split('|') if '|' in str(row['speaker_scored_amped']) else [row['speaker_scored_amped']]
+            st.write(amplifieds)
+            st.write(stop_amps)
             for i in range(len(amplifieds)):
                 if i <= len(stop_amps) - 1:
-                    amplif_spks.append(len([x for x in spks if amplif_spks[i] <= x <= stop_amps[i]]))
+                    amplif_spks.append(len([x for x in spks if amplifieds[i] < x < stop_amps[i]]))
         maxes.update({f"{tm}" : max(amplif_spks)})
 
     st.write(maxes)
 
+
     
 
+ 
 def node_graph_picklist(team_stats):
     team_to = {
 
@@ -344,7 +346,7 @@ def node_graph_picklist(team_stats):
 
 
 
-    
+  
 def tele_amp(data, teams):
     fig = go.Figure()
     for i in range(len(teams)):
@@ -362,6 +364,8 @@ def tele_amp(data, teams):
     showlegend=True
     )
     return fig
+
+ 
 def tele_speaker(data, teams):
     fig = go.Figure()
     for i in range(len(teams)):
@@ -380,6 +384,8 @@ def tele_speaker(data, teams):
     )
     return fig
 
+
+ 
 def auto_amp(data, teams):
     fig = go.Figure()
     for i in range(len(teams)):
@@ -397,6 +403,8 @@ def auto_amp(data, teams):
     showlegend=True
     )
     return fig
+
+ 
 def auto_speaker(data, teams):
     fig = go.Figure()
     for i in range(len(teams)):
@@ -423,5 +431,5 @@ def auto_speaker(data, teams):
 
 
 
-
+    
 #Test Data: [[A1,Null],[A2, 5], [A3, 10], [A4, Null], [A5, 2.7]]
