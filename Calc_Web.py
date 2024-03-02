@@ -201,7 +201,7 @@ def auto_paths(Data, teams):
     fig = go.Figure()
 
 
-    with open("Auto Path References (1).png", "rb") as img_file:
+    with open("Auto Path References.png", "rb") as img_file:
         img_base64 = base64.b64encode(img_file.read()).decode('ascii')
 
     fig.add_layout_image(
