@@ -20,17 +20,14 @@ try:
     Blue3 = int(Blue_Teams[2]) 
     Blue_Pred, Red_Pred = cw.match_prediction(team_stats=team_stats, Red1=Red1, Red2=Red2, Red3=Red3, Blue1=Blue1, Blue2=Blue2, Blue3=Blue3)
     col1, col2 = st.columns(2)
-    with col1:
-        st.write("# Red Win Prediction: ", Red_Pred)
-        st.button(f'{Red1}')
-        st.button(f'{Red2}')
-        st.button(f'{Red2}')
-
-    with col2:
-        st.write("# Blue Win Prediction: ", Blue_Pred)
-        st.button(f'{Blue1}')
-        st.button(f'{Blue2}')
-        st.button(f'{Blue3}')
+    col1.st.write("# Red Win Prediction: ", Red_Pred)
+    col1.st.button(f'{Red1}')
+    col1.st.button(f'{Red2}')
+    col1.st.button(f'{Red3}')
+    col2.st.write("# Blue Win Prediction: ", Blue_Pred)
+    col2.st.button(f'{Blue1}')
+    col2.st.button(f'{Blue2}')
+    col2.st.button(f'{Blue3}')
 except:
     st.markdown("# Please enter Red and Blue Alliance team numbers")
 
