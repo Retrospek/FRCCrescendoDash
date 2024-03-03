@@ -22,7 +22,7 @@ try:
     st.write("# Blue Win Prediction: ", Blue_Pred)
     st.write("# Red Win Prediction: ", Red_Pred)
 except:
-    st.markdown("# Data for one of the teams is insufficient")
+    st.markdown("# Please enter Red and Blue Alliance team numbers")
 
 
 
