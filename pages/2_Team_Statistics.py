@@ -19,8 +19,8 @@ try:
     Blue2 = int(Blue_Teams[1]) 
     Blue3 = int(Blue_Teams[2]) 
     Blue_Pred, Red_Pred = cw.match_prediction(team_stats=team_stats, Red1=Red1, Red2=Red2, Red3=Red3, Blue1=Blue1, Blue2=Blue2, Blue3=Blue3)
-    st.write("# Blue Win Prediction: ", Blue_Pred)
     st.write("# Red Win Prediction: ", Red_Pred)
+    st.write("# Blue Win Prediction: ", Blue_Pred)
 except:
     st.markdown("# Please enter Red and Blue Alliance team numbers")
 
