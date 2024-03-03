@@ -14,8 +14,8 @@ def main():
 
     st.title("Scouting Application")
 
-    if 'data' not in st.session_state:
-        st.session_state['data'] = st.file_uploader("Tournament Data")
+#    if 'data' not in st.session_state:
+#        st.session_state['data'] = st.file_uploader("Tournament Data")
 
 
     st.sidebar.success("Select a Function Above")
