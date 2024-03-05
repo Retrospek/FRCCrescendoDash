@@ -39,6 +39,8 @@ def main():
             Knowing this I generated a cumulative average and standard deviation for each of the alliances and 
             applied the norm.cdf function to calculate the possibility of the Blue team winning. """)
     
-
+    st.write("""My match predictions for the FRC District Event at Waco accurately predicted the outcomes of 88% of the first 54 matches.
+              This accuracy rate is 14% higher than that of Statbotics, which predicted matches with 74% accuracy.
+              My match predictions for the FRC District Event at Waco predicted 86.66% of the match outcomes from the Playoffs.""")
 if __name__ == "__main__":
     main()
