@@ -151,7 +151,7 @@ def match_prediction(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
     return Blue_pred, Red_pred
     #Scouting\Team_Analysis\PointCalculator.py
 
-""""""""""def ml_prep(team_stats):
+def ml_prep(team_stats):
     training = pd.DataFrame(team_stats['Team Number'] ,columns=['Team Number'])
     training.insert(1,'AUTO_AVG', 0)
     training.insert(2,'AVG_TELE_SPEAKER', 0)
@@ -178,7 +178,7 @@ def match_prediction(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
 
 def ml_model(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
     ml_prep(team_stats=team_stats)
-    """"""""""
+
 
 
 
