@@ -19,11 +19,14 @@ import plotly.graph_objects as go
 #import sci
 import base64
 from PIL import Image
+from sklearn.preprocessing import StandardScaler
 
 
 #'Scouting\Team_Analysis\default (1).csv'
-def get_clean_data(csv):
-    default = pd.read_csv(filepath_or_buffer=csv, on_bad_lines= 'skip')
+def get_clean_data(data):
+    
+    default = data
+
     attributes = ['tele_spk_scored', 'tele_amp_scored', 'speaker_scored_amped']
     for i in range(len(default)):
         for j in range(len(attributes)):
@@ -149,8 +152,38 @@ def match_prediction(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
     return Blue_pred, Red_pred
     #Scouting\Team_Analysis\PointCalculator.py
 
+def ml_prep(team_stats):
+    training = pd.DataFrame(team_stats['Team Number'] ,columns=['Team Number'])
+    training.insert(1,'AUTO_AVG', 0)
+    training.insert(2,'AVG_TELE_SPEAKER', 0)
+    training.insert(3,'AVG_TELE_AMP', 0)
+    training.insert(4,'VARIABILITY', 0)
+    
+    training['AUTO_AVG'] = team_stats[['AVG_SPEAKER_AUTO', 'AVG_AMP_AUTO']].sum(axis=1)
+    training['AVG_TELE_AMP'] = team_stats['AVG_AMP_TELE']
+    training['AVG_TELE_SPEAKER'] = team_stats['AVG_SPEAKER_TELE']
+    training['VARIABLITY'] = team_stats['Score Variability']
+    st.dataframe(training)
+    st.write("XXXX")
+    std = StandardScaler()
+    column_names = training.columns
+    team_numbers = training['Team Number']
+    scaled_data = std.fit_transform(training.drop('Team Number', axis=1, inplace=True))
+    training = pd.DataFrame(scaled_data, columns=column_names)
 
- 
+    df_scaled = pd.concat([team_numbers, training], axis=1)
+
+
+    st.write(df_scaled)
+    #st.dataframe(X)
+
+def ml_model(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
+    ml_prep(team_stats=team_stats)
+    
+
+
+
+
 def plot(team_stats):
     avg_speaker = []
     avg_amp = []
