@@ -36,7 +36,9 @@ else:
     st.write(Data_Choice)
     st.session_state.data = Data_Choice
     try:
+        st.write("X)
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
+        st.write("Y")
         team_stats = cw.team_desc(Data=data)
     except:
         st.error("Not Custom")
