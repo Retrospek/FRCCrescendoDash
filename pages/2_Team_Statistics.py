@@ -1,7 +1,6 @@
 import streamlit as st
 import Calc_Web as cw
 import pandas as pd
-import sklearn as skl
 
 
 # Specify the path to the module (1_page.py in this case)
