@@ -36,7 +36,6 @@ else:
     st.write(Data_Choice)
     st.session_state.data = Data_Choice
     try:
-        st.dataframe(pd.read_csv(st.session_state.data, on_bad_lines = 'skip'))
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
         team_stats = cw.team_desc(Data=data)
     except:
@@ -58,7 +57,6 @@ try:
         Blue_Pred, Red_Pred = cw.match_prediction(team_stats=team_stats, Red1=Red1, Red2=Red2, Red3=Red3, Blue1=Blue1, Blue2=Blue2, Blue3=Blue3)
         st.write("# Red Win Prediction: ", Red_Pred)
         st.write("# Blue Win Prediction: ", Blue_Pred)
-        
     except:
         st.markdown("# Please enter Red and Blue Alliance team numbers")
     
