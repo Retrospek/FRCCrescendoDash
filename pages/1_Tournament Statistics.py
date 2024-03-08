@@ -44,9 +44,7 @@ else:
 #test = "WACO_2024.csv"
 try:
     st.write("X")
-    data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
     st.write("Y")
-    team_stats = cw.team_desc(Data=data) #Get team_stats from clean data
     
     bubble = cw.plot(team_stats=team_stats) #plot
 
