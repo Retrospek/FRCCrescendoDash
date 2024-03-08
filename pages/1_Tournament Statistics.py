@@ -43,9 +43,7 @@ else:
 
 #test = "WACO_2024.csv"
 try:
-    st.write("X")
-    st.write("Y")
-    
+   
     bubble = cw.plot(team_stats=team_stats) #plot
 
 
