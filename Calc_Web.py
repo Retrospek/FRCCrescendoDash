@@ -19,9 +19,11 @@ import plotly.graph_objects as go
 #import sci
 import base64
 from PIL import Image
+from sklearn.preprocessing import StandardScaler
 
 
 #'Scouting\Team_Analysis\default (1).csv'
+@st.cache_data
 def get_clean_data(data):
     
     default = data
@@ -57,7 +59,8 @@ def get_clean_data(data):
                     default.loc[r, times[c]] = [-1]
     return default
 #team_stats = pd.DataFrame(columns=['Team-Number', 'AVG_AMP_AUTO', 'AVG_SPEAKER_AUTO', 'AVG_AMP_TELE', 'AVG_SPEAKER_TELE', 'STD_AMP_AUTO', 'STD_SPEAKER_AUTO', 'STD_AMP_TELE', 'STD_SPEAKER_TELE' ])
- 
+
+@st.cache_data
 def team_desc(Data):
     Data.dropna(subset='team_#',inplace=True) 
     team_numbers = Data['team_#'].unique()
@@ -178,7 +181,7 @@ def ml_prep(team_stats):
 
 def ml_model(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
     ml_prep(team_stats=team_stats)
-
+    
 
 
 
