@@ -59,6 +59,8 @@ try:
 
     teamstat = team_stats[team_stats['Team Number'].isin(teams)]
 
+    teamstat['Team Number'] = teamstat['Team Number'].astype(int)
+  
     st.dataframe(teamstat.style.highlight_max(axis=0))
 except:
   pass
