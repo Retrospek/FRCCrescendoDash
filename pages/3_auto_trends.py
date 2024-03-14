@@ -45,8 +45,8 @@ try:
 
     teams = st.sidebar.multiselect("Team Auto Trends: ", team_stats['Team Number'].unique())
 
-    auto_amp = cw.tele_amp(data, teams=teams)
-    auto_speaker = cw.tele_speaker(data, teams=teams)
+    auto_amp = cw.auto_amp(data, teams=teams)
+    auto_speaker = cw.auto_speaker(data, teams=teams)
     col1, col2 = st.columns(2)
     st.header("Change in Amps in Auto")
     st.plotly_chart(auto_amp)
