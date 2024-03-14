@@ -32,7 +32,9 @@ if Data_Choice == 'Custom':
         st.error("Please Enter Your Data")
 
 else:
+    st.write(Data_Choice)
     st.session_state.data = Data_Choice
+    st.dataframe(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
     try:
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
         team_stats = cw.team_desc(Data=data)
@@ -40,9 +42,7 @@ else:
         st.error("Not Custom")
 
 try:
-    data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
-    team_stats = cw.team_desc(Data=data)
-
+    
     teams = st.sidebar.multiselect("Team Tele-Op Trends: ", team_stats['Team Number'].unique())
 
     tele_amp = cw.tele_amp(data, teams=teams)
