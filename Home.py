@@ -23,6 +23,8 @@ def main():
     st.markdown("""This app's main function is to provide statistics that i've assembeled from FRC Crescendo 2024 data. 
                 Additionally, I've done feature engineering to create more insightful data for any user coming here""")
 
+    st.write("Arjun Mahableshwarkar")
+    
     st.markdown("# Set-Up")
     st.write("""I wanted to create a scouting prediction app that would take the likelyhood of
             any given 3 teams beating any other 3 teams. To accomplish this, I researched how to 
@@ -38,7 +40,8 @@ def main():
             a tournament it will have a normally distributed graph of data points that represent points scored.
             Knowing this I generated a cumulative average and standard deviation for each of the alliances and 
             applied the norm.cdf function to calculate the possibility of the Blue team winning. """)
-    
+
+    st.markdown("# Results")
     st.write("""My match predictions for the FRC District Event at Waco accurately predicted the outcomes of 88% of the first 54 matches.
               This accuracy rate is 14% higher than that of Statbotics, which predicted matches with 74% accuracy.""")
     st.write("""My match predictions for the FRC District Event at Waco predicted 86.66% of the match outcomes from the Playoffs.""")
