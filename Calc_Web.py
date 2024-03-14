@@ -76,7 +76,7 @@ def team_desc(Data):
     team_stats.insert(9, 'AVG_AMPLIF_TELE', 0)
     team_stats.insert(10, 'STD_AMPLIF_TELE', 0)
     team_stats.insert(11, 'Predicted Score', 0)
-    team_stats.insert(12, 'Score Variablity', 0)
+    team_stats.insert(12, 'Score Variability', 0)
     team_stats.insert(13, 'Win/Total', 0)
     for i in range(len(team_stats)):
         team = team_stats.at[i, 'Team Number']
@@ -112,8 +112,8 @@ def team_desc(Data):
         #if team_stats.at[j, 'Team Number'] == 1234:    
         team_stats.loc[j,'Predicted Score'] = team_stats.at[j, 'AVG_AMP_AUTO']*2 + team_stats.at[j, 'AVG_SPEAKER_AUTO']*5 + team_stats.at[j, 'AVG_AMP_TELE']*1 + team_stats.at[j, 'AVG_SPEAKER_TELE']*2
         team_stats.loc[j, 'Score Variability'] = math.sqrt(pow(team_stats.at[j,'STD_AMP_AUTO']*2, 2) + pow(team_stats.at[j,'STD_SPEAKER_AUTO']*5, 2) + pow(team_stats.at[j,'STD_AMP_TELE']*1, 2) + pow(team_stats.at[j,'STD_SPEAKER_TELE'] * 2, 2) )
-        if pd.isna(team_stats.at[j, 'Score Variablity']):
-            team_stats.loc[j, 'Score Variablity'] == 0
+        if pd.isna(team_stats.at[j, 'Score Variability']):
+            team_stats.loc[j, 'Score Variability'] == 0
     return team_stats
  
 def match_prediction(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
