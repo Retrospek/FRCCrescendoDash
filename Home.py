@@ -23,7 +23,7 @@ def main():
     st.markdown("""This app's main function is to provide statistics that i've assembeled from FRC Crescendo 2024 data. 
                 Additionally, I've done feature engineering to create more insightful data for any user coming here""")
 
-    st.write("Arjun Mahableshwarkar")
+    st.write("By: Arjun Mahableshwarkar")
     
     st.markdown("# Set-Up")
     st.write("""I wanted to create a scouting prediction app that would take the likelyhood of
