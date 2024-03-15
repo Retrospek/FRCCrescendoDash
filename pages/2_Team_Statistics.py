@@ -64,8 +64,9 @@ try:
 
         x_train, y_train = cw.ml_data(matches, data)
         
-        cw.ml_model(X_TRAIN=x_train, Y_TRAIN=y_train )
         st.header("Machine Learning Based Predictions")
+        cw.ml_model(X_TRAIN=x_train, Y_TRAIN=y_train )
+
         cw.use_model(Red_Teams, Blue_Teams, data)
         st.write("Beware lack of data may lead to overfitting, so reference both models")
 
