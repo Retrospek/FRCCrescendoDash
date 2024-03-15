@@ -11,6 +11,8 @@ st.set_page_config(page_title="Team Tele Trends",
                    page_icon="tropy",
                    layout='wide')
 
+st.title("AUTO TRENDS")
+
 events = ['WACO_2024.csv', 'Custom']
 
 if 'data' not in st.session_state:
@@ -41,8 +43,13 @@ else:
         st.error("Not Custom")
         
 try:
-    teams = st.sidebar.multiselect("Team Auto Trends: ", team_stats['Team Number'].unique())
+    team_numbers = team_stats['Team Number'].unique().tolist()
 
+    teams = st.sidebar.multiselect("Team Tele-Op Trends: ", team_numbers)
+    all = st.sidebar.checkbox("All Teams")
+
+    if all:
+        teams = team_numbers
     auto_amp = cw.auto_amp(data, teams=teams)
     auto_speaker = cw.auto_speaker(data, teams=teams)
     col1, col2 = st.columns(2)
