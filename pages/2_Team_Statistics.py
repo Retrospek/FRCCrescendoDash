@@ -59,18 +59,22 @@ try:
         st.header("Statistics Based Predictions")
         st.write("Red Win Prediction: ", Red_Pred)
         st.write("Blue Win Prediction: ", Blue_Pred)
-        matches = cw.get_matches_cleaned()
-        data = cw.ml_clean(team_stats=team_stats)
-
-        x_train, y_train = cw.ml_data(matches, data)
+        
         
         st.header("Machine Learning Based Predictions")
+        matches = cw.get_matches_cleaned()
+        training_data = cw.get_clean_data(pd.read_csv('WACO_2024.csv', on_bad_lines='skip'))
+        training_stats = cw.team_desc(training_data)
+        data = cw.ml_clean(team_stats=team_stats)
+        train_data = cw.ml_clean(team_stats=training_stats)
+        x_train, y_train = cw.ml_data(matches, train_data)
         cw.ml_model(X_TRAIN=x_train, Y_TRAIN=y_train )
 
         cw.use_model(Red_Teams, Blue_Teams, data)
         st.write("Beware lack of data may lead to overfitting, so reference both models")
 
-    except:
+    except Exception as error:
+        st.write(error)
         st.markdown("# Please enter Red and Blue Alliance team numbers")
     
 
