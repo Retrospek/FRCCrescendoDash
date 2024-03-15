@@ -254,7 +254,7 @@ def ml_model(X_TRAIN, Y_TRAIN):
 
     y_pred_two = loaded_model.predict(X_TRAIN)
     accuracy = accuracy_score(Y_TRAIN, y_pred_two)
-    st.write("Waco Tournament Accuracy:", accuracy)
+    st.write("Accuracy:", accuracy)
 
 def use_model(Red_teams, Blue_teams, stand_teams):
     loaded_model = joblib.load('rf_model.joblib')
