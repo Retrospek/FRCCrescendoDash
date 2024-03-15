@@ -47,13 +47,13 @@ def main():
                 After developing a clean and stable model that doesn't overfit the WACO event tournament I developed the ml model, and it gave back amazing results that I listed below.""")
                 
 
-    st.markdown("Statistics Results")
+    st.markdown("# Statistics Results")
     st.write("""My match predictions for the FRC District Event at Waco accurately predicted the outcomes of 88% of the first 54 matches.
               This accuracy rate is 14% higher than that of Statbotics, which predicted matches with 74% accuracy.""")
               
     st.write("""My match predictions for the FRC District Event at Waco predicted 86.66% of the match outcomes from the Playoffs.""")
 
-    st.markdown("ML Results")
+    st.markdown("# ML Results")
     st.write("""My match predictions for the FRC District Event at Waco predicted 91% of the qualifications results. This accuracy beat both my statistics approach by 3 percent 
                 and the statbotics approach by 17%""")
     st.write("""However, all ml models must face the frustrating obstacle of having a lack of data, so be cautious when consulting the ml predictions if you don't have an abundance of field records.
