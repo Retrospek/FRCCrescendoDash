@@ -1,6 +1,7 @@
 import streamlit as st
 import Calc_Web as cw
 import pandas as pd
+import sklearn as skl
 
 
 # Specify the path to the module (1_page.py in this case)
@@ -55,8 +56,19 @@ try:
         Blue2 = int(Blue_Teams[1]) 
         Blue3 = int(Blue_Teams[2]) 
         Blue_Pred, Red_Pred = cw.match_prediction(team_stats=team_stats, Red1=Red1, Red2=Red2, Red3=Red3, Blue1=Blue1, Blue2=Blue2, Blue3=Blue3)
-        st.write("# Red Win Prediction: ", Red_Pred)
-        st.write("# Blue Win Prediction: ", Blue_Pred)
+        st.header("Statistics Based Predictions")
+        st.write("Red Win Prediction: ", Red_Pred)
+        st.write("Blue Win Prediction: ", Blue_Pred)
+        matches = cw.get_matches_cleaned()
+        data = cw.ml_clean(team_stats=team_stats)
+
+        x_train, y_train = cw.ml_data(matches, data)
+        
+        cw.ml_model(X_TRAIN=x_train, Y_TRAIN=y_train )
+        st.header("Machine Learning Based Predictions")
+        cw.use_model(Red_Teams, Blue_Teams, data)
+        st.write("Beware lack of data may lead to overfitting, so reference both models")
+
     except:
         st.markdown("# Please enter Red and Blue Alliance team numbers")
     
