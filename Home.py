@@ -57,7 +57,7 @@ def main():
     st.write("""My match predictions for the FRC District Event at Waco predicted 91% of the qualifications results. This accuracy beat both my statistics approach by 3 percent 
                 and the statbotics approach by 17%""")
     st.write("""However, all ml models must face the frustrating obstacle of having a lack of data, so be cautious when consulting the ml predictions if you don't have an abundance of field records.
-                To combat this, I would recommend looking at the statistic based approach alongside the ml prediction."""
+                To combat this, I would recommend looking at the statistic based approach alongside the ml prediction.""")
     
 if __name__ == "__main__":
     main()
