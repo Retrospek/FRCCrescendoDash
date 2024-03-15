@@ -11,6 +11,8 @@ st.set_page_config(page_title="Team Tele Trends",
                    page_icon="tropy",
                    layout='wide')
 
+st.title("TELE TRENDS")
+
 events = ['WACO_2024.csv', 'Custom']
 
 if 'data' not in st.session_state:
@@ -34,7 +36,6 @@ if Data_Choice == 'Custom':
 else:
     st.write(Data_Choice)
     st.session_state.data = Data_Choice
-    st.dataframe(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
     try:
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
         team_stats = cw.team_desc(Data=data)
@@ -42,8 +43,13 @@ else:
         st.error("Not Custom")
 
 try:
-    
-    teams = st.sidebar.multiselect("Team Tele-Op Trends: ", team_stats['Team Number'].unique())
+    team_numbers = team_stats['Team Number'].unique().tolist()
+
+    teams = st.sidebar.multiselect("Team Tele-Op Trends: ", team_numbers)
+    all = st.sidebar.checkbox("All Teams")
+
+    if all:
+        teams = team_numbers
 
     tele_amp = cw.tele_amp(data, teams=teams)
     tele_speaker = cw.tele_speaker(data, teams=teams)
