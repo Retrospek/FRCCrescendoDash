@@ -44,12 +44,13 @@ def main():
     st.write("""After Waco, there was more data for me to use, and after requesting for a new field to be added to the dataset, who won or lost, I was able to finally approach an ml method of solving match prediction problems.
                 With this better data, I found out how to create a dynamic pattern between each team by taking their standardized scores between 0 and 1 to solve field-heavy ml tasks.
                 In the first stages, I approached ensemble learning and found 2 different methods that work the best: logistic regression, gradient boosting, and while it isn't a model, hyperparameter tuning.
-                After developing a clean and stable model that doesn't overfit the WACO event tournament I developed the ml model, and it gave back amazing results that I listed below.
+                After developing a clean and stable model that doesn't overfit the WACO event tournament I developed the ml model, and it gave back amazing results that I listed below.""")
                 
 
     st.markdown("Statistics Results")
     st.write("""My match predictions for the FRC District Event at Waco accurately predicted the outcomes of 88% of the first 54 matches.
               This accuracy rate is 14% higher than that of Statbotics, which predicted matches with 74% accuracy.""")
+              
     st.write("""My match predictions for the FRC District Event at Waco predicted 86.66% of the match outcomes from the Playoffs.""")
 
     st.markdown("ML Results")
