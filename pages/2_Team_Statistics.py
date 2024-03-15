@@ -72,6 +72,7 @@ try:
 
         cw.use_model(Red_Teams, Blue_Teams, data)
         st.write("Beware lack of data may lead to underrepresentation for a robot, so reference both models")
+        st.write(""" Once a ample amount of data is acquired, around 32 records, you can prioritize the ml model""")
 
     except:
       pass
