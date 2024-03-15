@@ -241,6 +241,7 @@ def ml_data(matches, stand_teams):
 
     return x_train, y_train
 
+@st.cache_data
 def ml_model(X_TRAIN, Y_TRAIN):
     X_train, X_test, y_train, y_test = train_test_split(X_TRAIN, Y_TRAIN, test_size=0.2, random_state=42)
     gb_clf = GradientBoostingClassifier(n_estimators=10, learning_rate=0.2, random_state=42)
@@ -254,7 +255,38 @@ def ml_model(X_TRAIN, Y_TRAIN):
     y_pred_two = loaded_model.predict(X_TRAIN)
     accuracy = accuracy_score(Y_TRAIN, y_pred_two)
 
-    st.write("Accuracy:", accuracy)
+
+def use_model(Red_teams, Blue_teams, stand_teams):
+    loaded_model = joblib.load('rf_model.joblib')
+    Red1 = stand_teams.loc[stand_teams['Team Number'] == Red_teams[0]]
+    Red2 = stand_teams.loc[stand_teams['Team Number'] == Red_teams[1]]
+    Red3 = stand_teams.loc[stand_teams['Team Number'] == Red_teams[2]]
+    Blue1 = stand_teams.loc[stand_teams['Team Number'] == Blue_teams[0]]
+    Blue2 = stand_teams.loc[stand_teams['Team Number'] == Blue_teams[1]]
+    Blue3 = stand_teams.loc[stand_teams['Team Number'] == Blue_teams[2]]
+    attributes = ['AUTO_AVG', 'AVG_TELE_SPEAKER', 'AVG_TELE_AMP', 'VARIABILITY']
+    RedAlliance = []
+    BlueAlliance = []
+    for j in range(len(attributes)):
+        attribute = attributes[j]
+        if attribute == 'VARIABILITY':
+            RedAlliance.append(math.sqrt(pow(Red1[attribute].iloc[0], 2)+pow(Red2[attribute].iloc[0], 2)+pow(Red3[attribute].iloc[0], 2)))
+            BlueAlliance.append(math.sqrt(pow(Blue1[attribute].iloc[0], 2)+pow(Blue2[attribute].iloc[0], 2)+pow(Blue3[attribute].iloc[0], 2)))
+
+        else:
+            RedAlliance.append(Red1[attribute].iloc[0] + Red2[attribute].iloc[0] + Red3[attribute].iloc[0])
+            BlueAlliance.append(Blue1[attribute].iloc[0] + Blue2[attribute].iloc[0] + Blue3[attribute].iloc[0])
+            
+    difference = [x - y for x, y in zip(RedAlliance, BlueAlliance)]
+    x_test = []
+    x_test.append(difference)
+    match_pred = loaded_model.predict(x_test)
+    if match_pred == 0:
+        st.write('Prediction: RED') 
+    else:
+        st.write('Prediction: BLUE')
+
+
 
 def plot(team_stats):
     avg_speaker = []
