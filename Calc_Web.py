@@ -201,7 +201,6 @@ def ml_data(matches, stand_teams):
     matches.loc[matches['BlueScore'] > matches['RedScore'], 'Winner'] = 'Blue'  # Update to 'Blue' if Blue alliance won
     aggreg = matches.drop(['RedScore', 'BlueScore'], axis=1)
     #aggreg['Team Number'] = aggreg['Team Number'].astype('float64')
-
     ##### Created the match outcomes
     ##### Now to create training dataset
     x_train = []
@@ -215,7 +214,6 @@ def ml_data(matches, stand_teams):
         Blue1 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Blue1']]
         Blue2 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Blue2']]
         Blue3 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Blue3']]
-
         RedAlliance = []
         BlueAlliance = []
         for j in range(len(attributes)):
