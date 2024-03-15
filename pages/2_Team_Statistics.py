@@ -73,9 +73,9 @@ try:
         cw.use_model(Red_Teams, Blue_Teams, data)
         st.write("Beware lack of data may lead to overfitting, so reference both models")
 
-    except Exception as error:
-        st.write(error)
-        st.markdown("# Please enter Red and Blue Alliance team numbers")
+    except:
+      pass
+        
     
 
 except:
