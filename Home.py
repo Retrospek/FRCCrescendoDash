@@ -58,6 +58,6 @@ def main():
                 and the statbotics approach by 17%""")
     st.write("""However, all ml models must face the frustrating obstacle of having a lack of data, so be cautious when consulting the ml predictions if you don't have an abundance of field records.
                 To combat this, I would recommend looking at the statistic based approach alongside the ml prediction.""")
-    
+    st.write(""" The issue is that if there is too little data, then the team-based statistics may not represent the real strength of a robot""")
 if __name__ == "__main__":
     main()
