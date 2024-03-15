@@ -19,8 +19,12 @@ import plotly.graph_objects as go
 #import sci
 import base64
 from PIL import Image
-from sklearn.preprocessing import StandardScaler
-
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import accuracy_score
+import joblib
 
 #'Scouting\Team_Analysis\default (1).csv'
 @st.cache_data
@@ -154,37 +158,103 @@ def match_prediction(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
     return Blue_pred, Red_pred
     #Scouting\Team_Analysis\PointCalculator.py
 
-def ml_prep(team_stats):
-    training = pd.DataFrame(team_stats['Team Number'] ,columns=['Team Number'])
-    training.insert(1,'AUTO_AVG', 0)
-    training.insert(2,'AVG_TELE_SPEAKER', 0)
-    training.insert(3,'AVG_TELE_AMP', 0)
-    training.insert(4,'VARIABILITY', 0)
-    
+def ml_clean(team_stats):
+    training = pd.DataFrame(team_stats['Team Number'], columns=['Team Number'])
     training['AUTO_AVG'] = team_stats[['AVG_SPEAKER_AUTO', 'AVG_AMP_AUTO']].sum(axis=1)
     training['AVG_TELE_AMP'] = team_stats['AVG_AMP_TELE']
     training['AVG_TELE_SPEAKER'] = team_stats['AVG_SPEAKER_TELE']
-    training['VARIABLITY'] = team_stats['Score Variability']
-    st.dataframe(training)
-    st.write("XXXX")
-    std = StandardScaler()
-    column_names = training.columns
-    team_numbers = training['Team Number']
-    scaled_data = std.fit_transform(training.drop('Team Number', axis=1, inplace=True))
-    training = pd.DataFrame(scaled_data, columns=column_names)
+    training['VARIABILITY'] = team_stats['Score Variability']
+    
+    scaler = MinMaxScaler()
+    normalized_data = scaler.fit_transform(training.drop('Team Number', axis=1))
+    normalized_df = pd.DataFrame(normalized_data, columns=['AUTO_AVG', 'AVG_TELE_SPEAKER', 'AVG_TELE_AMP', 'VARIABILITY'])
+    
+    full_data = pd.concat([training['Team Number'], normalized_df], axis=1) 
 
-    df_scaled = pd.concat([team_numbers, training], axis=1)
-
-
-    st.write(df_scaled)
+    return full_data
     #st.dataframe(X)
 
-def ml_model(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
-    ml_prep(team_stats=team_stats)
+@st.cache_data
+def get_matches_cleaned():
+    file_path = "data.txt"
+
+    total_df = pd.DataFrame(columns=['Red1', 'Red2', 'Red3', 'Blue1', 'Blue2', 'Blue3', 'RedScore', 'BlueScore'])
+    with open(file_path, 'r') as file:
+        # Read the file line by line
+        line_count = 0
+        for line in file:
+            line_count += 1
+
+            if line_count % 2 == 0:
+                # Split the line into individual values
+                values = line.strip().split('\t')
+                values = [float(val) if val.replace('.', '', 1).isdigit() else None for val in values]
+                # Append the new DataFrame to the total_df
+                total_df.loc[len(total_df.index)] = values 
+
+
+    return total_df
+
+@st.cache_data
+def ml_data(matches, stand_teams):
+    matches['Winner'] = 'Red'  # Assume Red alliance won initially
+    matches.loc[matches['BlueScore'] > matches['RedScore'], 'Winner'] = 'Blue'  # Update to 'Blue' if Blue alliance won
+    aggreg = matches.drop(['RedScore', 'BlueScore'], axis=1)
+    #aggreg['Team Number'] = aggreg['Team Number'].astype('float64')
+
+    ##### Created the match outcomes
+    ##### Now to create training dataset
+    x_train = []
+    y_train = []
+    attributes = ['AUTO_AVG', 'AVG_TELE_SPEAKER', 'AVG_TELE_AMP', 'VARIABILITY']
+    for i in range(len(aggreg)):
+        #st.write(aggreg.at[0,'Team Number'])
+        Red1 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Red1']]
+        Red2 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Red2']]
+        Red3 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Red3']]
+        Blue1 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Blue1']]
+        Blue2 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Blue2']]
+        Blue3 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Blue3']]
+
+        RedAlliance = []
+        BlueAlliance = []
+        for j in range(len(attributes)):
+            attribute = attributes[j]
+            if attribute == 'VARIABILITY':
+                RedAlliance.append(math.sqrt(pow(Red1[attribute].iloc[0], 2)+pow(Red2[attribute].iloc[0], 2)+pow(Red3[attribute].iloc[0], 2)))
+                BlueAlliance.append(math.sqrt(pow(Blue1[attribute].iloc[0], 2)+pow(Blue2[attribute].iloc[0], 2)+pow(Blue3[attribute].iloc[0], 2)))
+
+            else:
+                RedAlliance.append(Red1[attribute].iloc[0] + Red2[attribute].iloc[0] + Red3[attribute].iloc[0])
+                BlueAlliance.append(Blue1[attribute].iloc[0] + Blue2[attribute].iloc[0] + Blue3[attribute].iloc[0])
+                
     
+        difference = [x - y for x, y in zip(RedAlliance, BlueAlliance)]
+        result = []
 
+        if aggreg.at[i, 'Winner'] == 'Red':
+             result.append(0)
+        else:
+            result.append(1)
+        x_train.append(difference)
+        y_train.append(result)
 
+    return x_train, y_train
 
+def ml_model(X_TRAIN, Y_TRAIN):
+    X_train, X_test, y_train, y_test = train_test_split(X_TRAIN, Y_TRAIN, test_size=0.2, random_state=42)
+    gb_clf = GradientBoostingClassifier(n_estimators=10, learning_rate=0.2, random_state=42)
+    gb_clf.fit(X_train, y_train)
+    y_pred = gb_clf.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    joblib.dump(gb_clf, 'rf_model.joblib')
+
+    loaded_model = joblib.load('rf_model.joblib')
+
+    y_pred_two = loaded_model.predict(X_TRAIN)
+    accuracy = accuracy_score(Y_TRAIN, y_pred_two)
+
+    st.write("Accuracy:", accuracy)
 
 def plot(team_stats):
     avg_speaker = []
