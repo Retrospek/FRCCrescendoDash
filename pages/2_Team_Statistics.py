@@ -77,7 +77,7 @@ try:
         st.write(""" Once a ample amount of data is acquired you can prioritize the ml model""")
 
     except:
-      st.write("""Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction.""")
+      st.write("""# Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction.""")
         
     
 
