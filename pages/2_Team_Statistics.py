@@ -71,7 +71,7 @@ try:
         cw.ml_model(X_TRAIN=x_train, Y_TRAIN=y_train )
 
         cw.use_model(Red_Teams, Blue_Teams, data)
-        st.write("Beware lack of data may lead to overfitting, so reference both models")
+        st.write("Beware lack of data may lead to underrepresentation for a robot, so reference both models")
 
     except:
       pass
