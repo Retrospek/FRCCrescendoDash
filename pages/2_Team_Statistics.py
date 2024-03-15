@@ -42,6 +42,8 @@ else:
     except:
         st.error("Not Custom")
 
+st.write("""Recomendation: Write a script that combines previous datasets, so you don't have to depend on new and volatile data that may skew
+         your results.""")
 
 st.sidebar.header("Team Select")
 #test = "WACO_2024.csv"
