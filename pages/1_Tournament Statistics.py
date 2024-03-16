@@ -10,7 +10,7 @@ st.set_page_config(page_title="Tournament Statistics and Predictions",
 
 st.title("Tournament Statistics")
 
-events = ['WACO_2024.csv', 'Custom']
+events = ['WACO_2024.csv','Fort Worth (1).csv', 'Custom']
 
 if 'data' not in st.session_state:
     st.session_state.data = 'WACO_2024.csv'  # Set default value
@@ -31,7 +31,6 @@ if Data_Choice == 'Custom':
         st.error("Please Enter Your Data")
 
 else:
-    st.write(Data_Choice)
     st.session_state.data = Data_Choice
     try:
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
