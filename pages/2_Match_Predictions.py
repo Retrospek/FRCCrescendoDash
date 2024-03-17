@@ -89,7 +89,7 @@ try:
         user_stats = cw.ml_clean([st.session_state.data])
         cw.use_model(Red_Teams, Blue_Teams, user_stats)
         st.write("Beware lack of data may lead to underrepresentation for a robot, so reference both models")
-        st.write(""" Once a ample amount of data is acquired you can prioritize both of the the machine learning models""")
+        st.write(""" Once a ample amount of data is acquired you can prioritize the machine learning model""")
 
     except:
       st.write("""# Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction.""")
