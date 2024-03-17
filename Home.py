@@ -48,8 +48,8 @@ def main():
                 
 
     st.markdown("# Statistics Results")
-    st.write("""My match predictions for the FRC District Event at Waco accurately predicted the outcomes of 88% of the first 54 matches.
-              This accuracy rate is 14% higher than that of Statbotics, which predicted matches with 74% accuracy.""")
+    st.write("""My match predictions for the FRC District Event at Waco accurately predicted the outcomes of 85% of the first 54 matches.
+              This accuracy rate is 11% higher than that of Statbotics, which predicted matches with 74% accuracy.""")
               
     st.write("""My match predictions for the FRC District Event at Waco predicted 86.66% of the match outcomes from the Playoffs.""")
 
