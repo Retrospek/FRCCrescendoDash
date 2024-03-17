@@ -309,6 +309,8 @@ def use_model(Red_teams, Blue_teams, stats_teams):
     st.header("Gradient Boosted Output")
     st.markdown("All Tournament Accuracy: :green[89.34%]")
     st.markdown("FIT Waco Tournament Accuracy: :green[91.03%]")
+    st.markdown("FIT Fort Worth Tournament Accuracy: :green[88.64%]")
+
     if match_pred == 0:
         st.write('Prediction: :red[RED]') 
     else:
