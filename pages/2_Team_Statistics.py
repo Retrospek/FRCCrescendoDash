@@ -85,7 +85,7 @@ try:
         #---
         x_train, y_train = cw.ml_data(matches, ml_team_stats)
         cw.ml_model(X_TRAIN=x_train, Y_TRAIN=y_train )
-        cw.neural_net(X_TRAIN=x_train, Y_TRAIN=y_train)
+        #cw.neural_net(X_TRAIN=x_train, Y_TRAIN=y_train)
         user_stats = cw.ml_clean([st.session_state.data])
         cw.use_model(Red_Teams, Blue_Teams, user_stats)
         st.write("Beware lack of data may lead to underrepresentation for a robot, so reference both models")
