@@ -23,7 +23,14 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import svm
 from sklearn.metrics import accuracy_score
+import tensorflow as tf
+from keras .models import Sequential
+from keras .layers import Dense
+from keras.models import load_model
 import joblib
 
 #'Scouting\Team_Analysis\default (1).csv'
@@ -157,105 +164,151 @@ def match_prediction(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
     Red_pred = (1-Blue_Win) * 100
     return Blue_pred, Red_pred
     #Scouting\Team_Analysis\PointCalculator.py
-
-def ml_clean(team_stats):
-    training = pd.DataFrame(team_stats['Team Number'], columns=['Team Number'])
-    training['AUTO_AVG'] = team_stats[['AVG_SPEAKER_AUTO', 'AVG_AMP_AUTO']].sum(axis=1)
-    training['AVG_TELE_AMP'] = team_stats['AVG_AMP_TELE']
-    training['AVG_TELE_SPEAKER'] = team_stats['AVG_SPEAKER_TELE']
-    training['VARIABILITY'] = team_stats['Score Variability']
-    
-    scaler = MinMaxScaler()
-    normalized_data = scaler.fit_transform(training.drop('Team Number', axis=1))
-    normalized_df = pd.DataFrame(normalized_data, columns=['AUTO_AVG', 'AVG_TELE_SPEAKER', 'AVG_TELE_AMP', 'VARIABILITY'])
-    
-    full_data = pd.concat([training['Team Number'], normalized_df], axis=1) 
-
-    return full_data
-    #st.dataframe(X)
-
+##################################################################################
+##################################################################################
+######## MACHINE LEARNING SECTION FROM HERE ON OUT ML SECTION ####################
 @st.cache_data
-def get_matches_cleaned():
-    file_path = "data.txt"
+def ml_clean(events):
+    event_stats = []
+    for event in events:
+        training_data = get_clean_data(pd.read_csv(event, on_bad_lines='skip'))
+        training_stats = team_desc(training_data)
+        training = pd.DataFrame(training_stats['Team Number'], columns=['Team Number'])
+        training['AUTO_AVG'] = training_stats[['AVG_SPEAKER_AUTO', 'AVG_AMP_AUTO']].sum(axis=1)
+        training['AVG_TELE_AMP'] = training_stats['AVG_AMP_TELE']
+        training['AVG_TELE_SPEAKER'] = training_stats['AVG_SPEAKER_TELE']
+        training['VARIABILITY'] = training_stats['Score Variability']
+        
+        scaler = MinMaxScaler()
+        normalized_data = scaler.fit_transform(training.drop('Team Number', axis=1))
+        normalized_df = pd.DataFrame(normalized_data, columns=['AUTO_AVG', 'AVG_TELE_SPEAKER', 'AVG_TELE_AMP', 'VARIABILITY'])
+        
+        full_data = pd.concat([training['Team Number'], normalized_df], axis=1) 
 
-    total_df = pd.DataFrame(columns=['Red1', 'Red2', 'Red3', 'Blue1', 'Blue2', 'Blue3', 'RedScore', 'BlueScore'])
-    with open(file_path, 'r') as file:
-        # Read the file line by line
-        line_count = 0
-        for line in file:
-            line_count += 1
+        event_stats.append(full_data)
+    return event_stats
+        #st.dataframe(X)
+@st.cache_data
+def get_matches_cleaned(events):
+    total_df = []
+    for event in events:
+        file_path = event
 
-            if line_count % 2 == 0:
-                # Split the line into individual values
-                values = line.strip().split('\t')
-                values = [float(val) if val.replace('.', '', 1).isdigit() else None for val in values]
-                # Append the new DataFrame to the total_df
-                total_df.loc[len(total_df.index)] = values 
+        matches = pd.DataFrame(columns=['Red1', 'Red2', 'Red3', 'Blue1', 'Blue2', 'Blue3', 'RedScore', 'BlueScore'])
+        with open(file_path, 'r') as file:
+            # Read the file line by line
+            line_count = 0
+            for line in file:
+                line_count += 1
 
+                if line_count % 2 == 0:
+                    # Split the line into individual values
+                    values = line.strip().split('\t')
+                    values = [float(val) if val.replace('.', '', 1).isdigit() else None for val in values]
+                    # Append the new DataFrame to the total_df
+                    matches.loc[len(matches.index)] = values 
 
+        total_df.append(matches)
     return total_df
 
 @st.cache_data
-def ml_data(matches, stand_teams):
-    matches['Winner'] = 'Red'  # Assume Red alliance won initially
-    matches.loc[matches['BlueScore'] > matches['RedScore'], 'Winner'] = 'Blue'  # Update to 'Blue' if Blue alliance won
-    aggreg = matches.drop(['RedScore', 'BlueScore'], axis=1)
-    #aggreg['Team Number'] = aggreg['Team Number'].astype('float64')
-    ##### Created the match outcomes
-    ##### Now to create training dataset
+def ml_data(all_matches, ml_team_stats):
+
     x_train = []
     y_train = []
-    attributes = ['AUTO_AVG', 'AVG_TELE_SPEAKER', 'AVG_TELE_AMP', 'VARIABILITY']
-    for i in range(len(aggreg)):
-        #st.write(aggreg.at[0,'Team Number'])
-        Red1 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Red1']]
-        Red2 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Red2']]
-        Red3 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Red3']]
-        Blue1 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Blue1']]
-        Blue2 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Blue2']]
-        Blue3 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Blue3']]
-        RedAlliance = []
-        BlueAlliance = []
-        for j in range(len(attributes)):
-            attribute = attributes[j]
-            if attribute == 'VARIABILITY':
-                RedAlliance.append(math.sqrt(pow(Red1[attribute].iloc[0], 2)+pow(Red2[attribute].iloc[0], 2)+pow(Red3[attribute].iloc[0], 2)))
-                BlueAlliance.append(math.sqrt(pow(Blue1[attribute].iloc[0], 2)+pow(Blue2[attribute].iloc[0], 2)+pow(Blue3[attribute].iloc[0], 2)))
+    for i in range(len(all_matches)):
+        matches = all_matches[i]
+        stand_teams = ml_team_stats[i]
+        matches['Winner'] = 'Red'  # Assume Red alliance won initially
+        matches.loc[matches['BlueScore'] > matches['RedScore'], 'Winner'] = 'Blue'  # Update to 'Blue' if Blue alliance won
+        aggreg = matches.drop(['RedScore', 'BlueScore'], axis=1)
 
+        #aggreg['Team Number'] = aggreg['Team Number'].astype('float64')
+        ##### Created the match outcomes
+        ##### Now to create training dataset
+        attributes = ['AUTO_AVG', 'AVG_TELE_SPEAKER', 'AVG_TELE_AMP', 'VARIABILITY']
+        for i in range(len(aggreg)):
+
+            #st.write(aggreg.at[0,'Team Number'])
+            Red1 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Red1']]
+            Red2 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Red2']]
+            Red3 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Red3']]
+            Blue1 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Blue1']]
+            Blue2 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Blue2']]
+            Blue3 = stand_teams.loc[stand_teams['Team Number'] == aggreg.at[i,'Blue3']]
+            RedAlliance = []
+            BlueAlliance = []
+            for j in range(len(attributes)):
+                attribute = attributes[j]
+                if not Red1.empty and not Red2.empty and not Red3.empty and not Blue1.empty and not Blue2.empty and not Blue3.empty:
+                    if attribute == 'VARIABILITY':
+                        RedAlliance.append(math.sqrt(pow(Red1[attribute].iloc[0], 2)+pow(Red2[attribute].iloc[0], 2)+pow(Red3[attribute].iloc[0], 2)))
+                        BlueAlliance.append(math.sqrt(pow(Blue1[attribute].iloc[0], 2)+pow(Blue2[attribute].iloc[0], 2)+pow(Blue3[attribute].iloc[0], 2)))
+
+                    else:
+                        RedAlliance.append(Red1[attribute].iloc[0] + Red2[attribute].iloc[0] + Red3[attribute].iloc[0])
+                        BlueAlliance.append(Blue1[attribute].iloc[0] + Blue2[attribute].iloc[0] + Blue3[attribute].iloc[0])
+                        
+            
+            difference = [x - y for x, y in zip(RedAlliance, BlueAlliance)]
+            result = []
+
+            if aggreg.at[i, 'Winner'] == 'Red':
+                result.append(0)
             else:
-                RedAlliance.append(Red1[attribute].iloc[0] + Red2[attribute].iloc[0] + Red3[attribute].iloc[0])
-                BlueAlliance.append(Blue1[attribute].iloc[0] + Blue2[attribute].iloc[0] + Blue3[attribute].iloc[0])
-                
-    
-        difference = [x - y for x, y in zip(RedAlliance, BlueAlliance)]
-        result = []
-
-        if aggreg.at[i, 'Winner'] == 'Red':
-             result.append(0)
-        else:
-            result.append(1)
-        x_train.append(difference)
-        y_train.append(result)
-
+                result.append(1)
+            x_train.append(difference)
+            y_train.append(result)
     return x_train, y_train
 
 @st.cache_data
 def ml_model(X_TRAIN, Y_TRAIN):
-    X_train, X_test, y_train, y_test = train_test_split(X_TRAIN, Y_TRAIN, test_size=0.2, random_state=42)
-    gb_clf = GradientBoostingClassifier(n_estimators=10, learning_rate=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X_TRAIN, Y_TRAIN, test_size=0.45, random_state=42)
+    gb_clf = GradientBoostingClassifier(n_estimators=13, learning_rate=0.2, random_state=42)
     gb_clf.fit(X_train, y_train)
     y_pred = gb_clf.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
-    joblib.dump(gb_clf, 'rf_model.joblib')
+    joblib.dump(gb_clf, 'tourney.joblib')
 
-    loaded_model = joblib.load('rf_model.joblib')
+    loaded_model = joblib.load('tourney.joblib')
 
     y_pred_two = loaded_model.predict(X_TRAIN)
     accuracy = accuracy_score(Y_TRAIN, y_pred_two)
-    st.write("Waco Tournament Accuracy:", accuracy)
 
-def use_model(Red_teams, Blue_teams, stand_teams):
-    loaded_model = joblib.load('rf_model.joblib')
+@st.cache_data
+def neural_net(X_TRAIN, Y_TRAIN):
+    X_train, X_test, y_train, y_test = train_test_split(X_TRAIN, Y_TRAIN, test_size=0.45, random_state=42)
+
+    X_train = np.array(X_train)
+    X_test = np.array(X_test)
+    y_train = np.array(y_train)
+    y_test = np.array(y_test)
+
+    model = Sequential([
+    Dense(128, activation='relu', input_shape=(len(X_train[0]),)),
+    Dense(128, activation='relu'),
+    Dense(1, activation='sigmoid')
+    ])
+
+    # Compile the model
+    model.compile(optimizer='rmsprop',
+                loss='binary_crossentropy',
+                metrics=['accuracy'])
+
+    # Train the model
+    model.fit(X_train, y_train, epochs=7, batch_size=20, validation_data=(X_test, y_test))
+
+    #Store
+    model.save('neuralnet.h5')
+    # Evaluate the model
+    loss, accuracy = model.evaluate(X_test, y_test)
+@st.cache_data
+def use_model(Red_teams, Blue_teams, stats_teams):
+    stand_teams = pd.DataFrame(columns=stats_teams[0].columns)
+    for i in range(len(stats_teams)):
+        stand_teams = pd.concat([stand_teams,stats_teams[i]], ignore_index=True)
+    ml_loaded_model = joblib.load('rf_model.joblib')
+    nn_loaded_model = load_model('neuralnet.h5')
     Red1 = stand_teams.loc[stand_teams['Team Number'] == Red_teams[0]]
     Red2 = stand_teams.loc[stand_teams['Team Number'] == Red_teams[1]]
     Red3 = stand_teams.loc[stand_teams['Team Number'] == Red_teams[2]]
@@ -278,12 +331,23 @@ def use_model(Red_teams, Blue_teams, stand_teams):
     difference = [x - y for x, y in zip(RedAlliance, BlueAlliance)]
     x_test = []
     x_test.append(difference)
-    match_pred = loaded_model.predict(x_test)
+    match_pred = ml_loaded_model.predict(x_test)
+    st.header("Neural Network Output")
+    #Loss: 0.3670739531517029
+    st.write("All Tournament Accuracy: :green[89.091%]")
+    output = nn_loaded_model.predict(np.array(x_test))
     if match_pred == 0:
-        st.write('Prediction: RED') 
+        st.write('Prediction: :red[RED]') 
     else:
-        st.write('Prediction: BLUE')
+        st.write('Prediction: :blue[BLUE]')
 
+    st.header("Gradient Boosted Output")
+    st.markdown("All Tournament Accuracy: :green[89.34%]")
+    st.markdown("FIT Waco Tournament Accuracy: :green[91.03%]")
+    if match_pred == 0:
+        st.write('Prediction: :red[RED]') 
+    else:
+        st.write('Prediction: :blue[BLUE]')
 
 
 def plot(team_stats):
