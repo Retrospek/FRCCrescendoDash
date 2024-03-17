@@ -60,20 +60,36 @@ try:
         st.header("Statistics Based Predictions")
         st.write("Red Win Prediction: ", Red_Pred)
         st.write("Blue Win Prediction: ", Blue_Pred)
+        if Red_Pred > Blue_Pred:
+            st.write("Prediction: :red[RED]")
+        elif Red_Pred < Blue_Pred:
+            st.write("Prediction: :blue[BLUE]")
         
-        
-        st.header("Machine Learning Based Predictions")
-        matches = cw.get_matches_cleaned()
-        training_data = cw.get_clean_data(pd.read_csv('WACO_2024.csv', on_bad_lines='skip'))
-        training_stats = cw.team_desc(training_data)
-        data = cw.ml_clean(team_stats=team_stats)
-        train_data = cw.ml_clean(team_stats=training_stats)
-        x_train, y_train = cw.ml_data(matches, train_data)
+        ############# MACHINE LEARNING PORTION ##########################
+        # Find all the events not the custom ones => want to pass this into the ml model as multiple tournaments and matches
+        events = [x for x in events if x != 'Custom']
+        #-------
+        ### Gonna list some useful vars ######### Meant for user data not ml data
+        #team_stats # averages and st.dev of specific teams in a tourney from a csv provided by user
+        #Red_Teams # List of red teams that are in a match
+        #Blue_Teams  # List of blue teams that are in a match
+        #-------
+        # Let's create our ml statistic dataframes that has the attributes that I care about for the model
+        ml_team_stats = cw.ml_clean(events) #Stores the team_statistics for each tournament in a list for the ml data
+                    #training_data = cw.get_clean_data(pd.read_csv('combine.csv', on_bad_lines='skip'))
+                    #training_stats = cw.team_desc(training_data)
+        #-------
+        # Get your matches into dataframes
+        event_matches = ['waco_matches.txt', 'fort_worth_matches.txt']
+        matches = cw.get_matches_cleaned(event_matches) #get all the match txt files into a dataframe format inside of a list     
+        #---
+        x_train, y_train = cw.ml_data(matches, ml_team_stats)
         cw.ml_model(X_TRAIN=x_train, Y_TRAIN=y_train )
-
-        cw.use_model(Red_Teams, Blue_Teams, data)
+        cw.neural_net(X_TRAIN=x_train, Y_TRAIN=y_train)
+        user_stats = cw.ml_clean([st.session_state.data])
+        cw.use_model(Red_Teams, Blue_Teams, user_stats)
         st.write("Beware lack of data may lead to underrepresentation for a robot, so reference both models")
-        st.write(""" Once a ample amount of data is acquired you can prioritize the ml model""")
+        st.write(""" Once a ample amount of data is acquired you can prioritize both of the the machine learning models""")
 
     except:
       st.write("""# Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction.""")
@@ -82,7 +98,6 @@ try:
 
 except:
     pass
-
 
 
 
