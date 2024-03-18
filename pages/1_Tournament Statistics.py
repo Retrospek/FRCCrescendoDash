@@ -62,8 +62,7 @@ try:
     st.markdown("# :blue[Specific Team Statistics]")
     team_stat = teamstat.style.highlight_max(axis=0)
     
-    st.dataframe(team_stat.set_index('Team Number').rename_axis(None), height=600, class_='sticky-df-container')
-
+    st.dataframe(team_stat)
 except:
   pass
 
