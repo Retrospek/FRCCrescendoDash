@@ -58,7 +58,7 @@ def main():
               
     st.write("""My match predictions for the FRC District Event at Waco predicted 86.66% of the match outcomes from the Playoffs.""")
 
-    #st.header("ML Results", divider='rainbow')
+    st.header("ML Results", divider='rainbow')
     st.write("""My match predictions for the FRC District Event at Waco predicted 91% of the qualifications results. This accuracy beat both my statistics approach by 6 percent 
                 and the statbotics approach by 17%""")
     st.write("""However, all ml models must face the frustrating obstacle of having a lack of data, so be cautious when consulting the ml predictions if you don't have an abundance of field records.
