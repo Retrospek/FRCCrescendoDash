@@ -52,7 +52,7 @@ def main():
                 After developing a clean and stable model that doesn't overfit the WACO event tournament I developed the ml model, and it gave back amazing results that I listed below.""")
                 
 
-    #st.header("Statistics Results", divider='rainbow')
+    st.header("Statistics Results", divider='rainbow')
     st.write("""My match predictions for the FRC District Event at Waco accurately predicted the outcomes of 85% of the first 54 matches.
               This accuracy rate is 11% higher than that of Statbotics, which predicted matches with 74% accuracy.""")
               
