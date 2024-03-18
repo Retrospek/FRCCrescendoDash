@@ -62,7 +62,6 @@ try:
     st.markdown("# :blue[Specific Team Statistics]")
     team_stat = teamstat.style.highlight_max(axis=0)
     
-    st.write('<style>.sticky-df-container { overflow-x: auto; }</style>', unsafe_allow_html=True)
     st.dataframe(team_stat.set_index('Team Number').rename_axis(None), height=600, class_='sticky-df-container')
 
 except:
