@@ -8,7 +8,7 @@ def main():
 
     st.set_page_config(
         page_title="Hello",
-        page_icon="👋",
+        page_icon="chart_with_upwards_trend",
         layout='wide'
     )
 
