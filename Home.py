@@ -45,7 +45,7 @@ def main():
             a tournament it will have a normally distributed graph of data points that represent points scored.
             Knowing this I generated a cumulative average and standard deviation for each of the alliances and 
             applied the norm.cdf function to calculate the possibility of the Blue team winning. """)
-    #st.header("Set-Up After Waco", divider='rainbow')
+    st.header("Set-Up After Waco", divider='rainbow')
     st.write("""After Waco, there was more data for me to use, and after requesting for a new field to be added to the dataset, who won or lost, I was able to finally approach an ml method of solving match prediction problems.
                 With this better data, I found out how to create a dynamic pattern between each team by taking their standardized scores between 0 and 1 to solve field-heavy ml tasks.
                 In the first stages, I approached ensemble learning and found 2 different methods that work the best: logistic regression, gradient boosting, and while it isn't a model, hyperparameter tuning.
