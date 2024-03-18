@@ -30,7 +30,7 @@ def main():
     st.markdown("FIT Waco Tournament Accuracy: :green[91.03%]")
     st.markdown("FIT Fort Worth Tournament Accuracy: :green[88.64%]")
     
-    #st.header("Set-Up Before WACO", divider='rainbow')
+    st.header("Set-Up Before WACO", divider='rainbow')
     st.write("""I wanted to create a scouting prediction app that would take the likelyhood of
             any given 3 teams beating any other 3 teams. To accomplish this, I researched how to 
             compare two comparable averages and standard deviations. Additionally, 
