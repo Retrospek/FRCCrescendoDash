@@ -46,15 +46,17 @@ try:
 
     teams = st.sidebar.multiselect("Team Tele-Op Trends: ", team_numbers)
     all = st.sidebar.checkbox("All Teams")
-
-    if all:
-        teams = team_numbers
-    auto_amp = cw.auto_amp(data, teams=teams)
-    auto_speaker = cw.auto_speaker(data, teams=teams)
-    col1, col2 = st.columns(2)
-    st.header("Change in Amps in Auto")
-    st.plotly_chart(auto_amp)
-    st.header("Change in Speaker in Auto")
-    st.plotly_chart(auto_speaker)
+    if len(teams) != 0:
+      if all:
+          teams = team_numbers
+      auto_amp = cw.auto_amp(data, teams=teams)
+      auto_speaker = cw.auto_speaker(data, teams=teams)
+      col1, col2 = st.columns(2)
+      st.header("Change in Amps in Auto")
+      st.plotly_chart(auto_amp)
+      st.header("Change in Speaker in Auto")
+      st.plotly_chart(auto_speaker)
+    else: 
+      st.write("Please enter the teams you want to analyze on the left sidebar")
 except:
     pass
