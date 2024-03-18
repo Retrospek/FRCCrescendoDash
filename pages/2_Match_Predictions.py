@@ -42,7 +42,7 @@ else:
         st.error("Not Custom")
 
 st.write("""Recomendation: Write a script that combines previous datasets, so you don't have to depend on new and volatile data that may skew
-         your results. => Leads to a higher accuracy""")
+         your results. => May lead to a higher accuracy, but still has the possibility to hurt the results since it may under or over represent a robot's performance""")
 
 st.sidebar.header("Team Select")
 #test = "WACO_2024.csv"
