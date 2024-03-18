@@ -45,20 +45,20 @@ def main():
             a tournament it will have a normally distributed graph of data points that represent points scored.
             Knowing this I generated a cumulative average and standard deviation for each of the alliances and 
             applied the norm.cdf function to calculate the possibility of the Blue team winning. """)
-    st.markdown("# Set-Up After Waco")
+    st.header("Set-Up After Waco", divider='rainbow)
     st.write("""After Waco, there was more data for me to use, and after requesting for a new field to be added to the dataset, who won or lost, I was able to finally approach an ml method of solving match prediction problems.
                 With this better data, I found out how to create a dynamic pattern between each team by taking their standardized scores between 0 and 1 to solve field-heavy ml tasks.
                 In the first stages, I approached ensemble learning and found 2 different methods that work the best: logistic regression, gradient boosting, and while it isn't a model, hyperparameter tuning.
                 After developing a clean and stable model that doesn't overfit the WACO event tournament I developed the ml model, and it gave back amazing results that I listed below.""")
                 
 
-    st.markdown("# Statistics Results")
+    st.header("Statistics Results", divider='rainbow)
     st.write("""My match predictions for the FRC District Event at Waco accurately predicted the outcomes of 85% of the first 54 matches.
               This accuracy rate is 11% higher than that of Statbotics, which predicted matches with 74% accuracy.""")
               
     st.write("""My match predictions for the FRC District Event at Waco predicted 86.66% of the match outcomes from the Playoffs.""")
 
-    st.markdown("# ML Results")
+    st.header("ML Results", divider='rainbow')
     st.write("""My match predictions for the FRC District Event at Waco predicted 91% of the qualifications results. This accuracy beat both my statistics approach by 6 percent 
                 and the statbotics approach by 17%""")
     st.write("""However, all ml models must face the frustrating obstacle of having a lack of data, so be cautious when consulting the ml predictions if you don't have an abundance of field records.
