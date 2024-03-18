@@ -24,8 +24,13 @@ def main():
                 Additionally, I've done feature engineering to create more insightful data for any user coming here""")
 
     st.write("By: Arjun Mahableshwarkar")
+
+    st.header("Gradient Boosted Output", divider='rainbow')
+    st.markdown("All Tournament Accuracy: :green[89.34%]")
+    st.markdown("FIT Waco Tournament Accuracy: :green[91.03%]")
+    st.markdown("FIT Fort Worth Tournament Accuracy: :green[88.64%]")
     
-    st.markdown("# Set-Up Before WACO")
+    st.header("Set-Up Before WACO", divider='rainbow)
     st.write("""I wanted to create a scouting prediction app that would take the likelyhood of
             any given 3 teams beating any other 3 teams. To accomplish this, I researched how to 
             compare two comparable averages and standard deviations. Additionally, 
