@@ -61,19 +61,10 @@ try:
     teamstat['Team Number'] = teamstat['Team Number'].astype(int)
     st.markdown("# :blue[Specific Team Statistics]")
     team_stat = teamstat.style.highlight_max(axis=0)
-    st.write("""
-    <style>
-    .dataframe.sticky th:nth-child(1) {
-        position: sticky;
-        left: 0;
-        z-index: 1;
-        background-color: white;
-        border-right: 1px solid #ddd;
-    }
-    </style>
-    """, unsafe_allow_html=True)
     
-    st.write(team_stat, class_='sticky')
+    st.write('<style>.sticky-df-container { overflow-x: auto; }</style>', unsafe_allow_html=True)
+    st.dataframe(df.set_index('Team Number').rename_axis(None), height=600, class_='sticky-df-container')
+
 except:
   pass
 
