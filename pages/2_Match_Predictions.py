@@ -92,7 +92,7 @@ try:
         st.write(""" Once a ample amount of data is acquired you can prioritize the machine learning model""")
 
     except:
-      st.write("""# Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction.""")
+      st.markdown("""# :orange[Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction]""")
         
     
 
