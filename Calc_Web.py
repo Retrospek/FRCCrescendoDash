@@ -27,7 +27,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import svm
 from sklearn.metrics import accuracy_score
-#import tensorflow as tf
+import tensorflow as tf
 #from keras .models import Sequential
 #from keras .layers import Dense
 #from keras.models import load_model
@@ -261,26 +261,26 @@ def ml_data(all_matches, ml_team_stats):
             y_train.append(result)
     return x_train, y_train
 
-@st.cache_data
 def ml_model(X_TRAIN, Y_TRAIN):
-    X_train, X_test, y_train, y_test = train_test_split(X_TRAIN, Y_TRAIN, test_size=0.45, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X_TRAIN, Y_TRAIN, test_size=0.2, random_state=42)
     gb_clf = GradientBoostingClassifier(n_estimators=13, learning_rate=0.2, random_state=42)
     gb_clf.fit(X_train, y_train)
     y_pred = gb_clf.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
+    #accuracy = accuracy_score(y_test, y_pred)
     joblib.dump(gb_clf, 'tourney.joblib')
 
     loaded_model = joblib.load('tourney.joblib')
 
     y_pred_two = loaded_model.predict(X_TRAIN)
     accuracy = accuracy_score(Y_TRAIN, y_pred_two)
+    return accuracy
 
-@st.cache_data
-def use_model(Red_teams, Blue_teams, stats_teams):
+
+def use_model(Red_teams, Blue_teams, stats_teams, accur_ml):
     stand_teams = pd.DataFrame(columns=stats_teams[0].columns)
     for i in range(len(stats_teams)):
         stand_teams = pd.concat([stand_teams,stats_teams[i]], ignore_index=True)
-    ml_loaded_model = joblib.load('rf_model.joblib')
+    ml_loaded_model = joblib.load('tourney.joblib')
     #nn_loaded_model = load_model('neuralnet.h5')
     Red1 = stand_teams.loc[stand_teams['Team Number'] == Red_teams[0]]
     Red2 = stand_teams.loc[stand_teams['Team Number'] == Red_teams[1]]
@@ -305,18 +305,23 @@ def use_model(Red_teams, Blue_teams, stats_teams):
     x_test = []
     x_test.append(difference)
     match_pred = ml_loaded_model.predict(x_test)
-
+    #nn_loaded_model = load_model('neuralnet.h5')
     st.header("Gradient Boosted Output")
-    st.markdown("All Tournament Accuracy: :green[89.34%]")
+    st.write(f"All Tournament Accuracy: :green[{accur_ml * 100}%]")
+    #st.markdown("All Tournament Accuracy: :green[89.34%]")
     st.markdown("FIT Waco Tournament Accuracy: :green[91.03%]")
-    st.markdown("FIT Fort Worth Tournament Accuracy: :green[88.64%]")
-
     if match_pred == 0:
         st.write('Prediction: :red[RED]') 
     else:
         st.write('Prediction: :blue[BLUE]')
 
+def test_model(X_TRAIN, Y_TRAIN):
+    model = joblib.load('tourney.joblib')
+    prediction = model.predict(X_TRAIN)
+    accuracy = accuracy_score(Y_TRAIN, prediction)
+    return accuracy
 
+@st.cache_data
 def plot(team_stats):
     avg_speaker = []
     avg_amp = []
