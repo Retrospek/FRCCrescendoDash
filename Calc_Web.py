@@ -307,7 +307,6 @@ def use_model(Red_teams, Blue_teams, stats_teams, accur_ml):
     match_pred = ml_loaded_model.predict(x_test)
     #nn_loaded_model = load_model('neuralnet.h5')
     st.header("Gradient Boosted Output")
-    st.write(f"All Tournament Accuracy: :green[{accur_ml * 100}%]")
     #st.markdown("All Tournament Accuracy: :green[89.34%]")
     st.markdown("FIT Waco Tournament Accuracy: :green[91.03%]")
     if match_pred == 0:
