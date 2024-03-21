@@ -41,8 +41,7 @@ else:
     except:
         st.error("Not Custom")
 
-st.write("""Recomendation: Write a script that combines previous datasets, so you don't have to depend on new and volatile data that may skew
-         your results. => May lead to a higher accuracy, but still has the possibility to hurt the results since it may under or over represent a robot's performance""")
+st.write("""Use a dataset specific to a competition so past results don't skew future results""")
 
 st.sidebar.header("Team Select")
 #test = "WACO_2024.csv"
@@ -82,17 +81,35 @@ try:
         # Get your matches into dataframes
         event_matches = ['waco_matches.txt', 'fort_worth_matches.txt']
         matches = cw.get_matches_cleaned(event_matches) #get all the match txt files into a dataframe format inside of a list     
-        #---
+        #-------
+        # ALL TOURNMENT ACCURACY
         x_train, y_train = cw.ml_data(matches, ml_team_stats)
-        cw.ml_model(X_TRAIN=x_train, Y_TRAIN=y_train )
-        #cw.neural_net(X_TRAIN=x_train, Y_TRAIN=y_train)
+        accur_ml = cw.ml_model(X_TRAIN=x_train, Y_TRAIN=y_train )
+        #accur_nn = cw.neural_net(X_TRAIN=x_train, Y_TRAIN=y_train)
         user_stats = cw.ml_clean([st.session_state.data])
-        cw.use_model(Red_Teams, Blue_Teams, user_stats)
+        cw.use_model(Red_Teams, Blue_Teams,user_stats, accur_ml)#, accur_nn
         st.write("Beware lack of data may lead to underrepresentation for a robot, so reference both models")
-        st.write(""" Once a ample amount of data is acquired you can prioritize the machine learning model""")
+        st.write(""" Once a ample amount of data is acquired you can prioritize both of the the machine learning models""")
+        # WACO ACCURACY
+        waco_team_stats = cw.ml_clean(['WACO_2024.csv'])
+        waco_matches = ['waco_matches.txt']
+        w_matches = cw.get_matches_cleaned(waco_matches)
+        X_train, Y_train = cw.ml_data(w_matches, waco_team_stats)
+        waco_accur = cw.test_model(X_train,Y_train)
+        st.write("WACO Accuracy", waco_accur)
+
+        # Fort Worth ACCURACY
+        fw_team_stats = cw.ml_clean(['Fort Worth (1).csv'])
+        fort_matches = ['fort_worth_matches.txt']
+        fw_matches = cw.get_matches_cleaned(fort_matches)
+        X_train, Y_train = cw.ml_data(fw_matches, fw_team_stats)
+        fw_accur = cw.test_model(X_train,Y_train)
+        st.write("Fort Worth Accuracy", fw_accur)
+        #Predictive of all stats
+        
 
     except:
-      st.markdown("""# :red[Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction]""")
+      st.write("""# Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction.""")
         
     
 
