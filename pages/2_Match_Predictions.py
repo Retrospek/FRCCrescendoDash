@@ -89,7 +89,7 @@ try:
         user_stats = cw.ml_clean([st.session_state.data])
         cw.use_model(Red_Teams, Blue_Teams,user_stats, accur_ml)#, accur_nn
         st.write("Beware lack of data may lead to underrepresentation for a robot, so reference both models")
-        st.write(""" Once a ample amount of data is acquired you can prioritize both of the the machine learning models""")
+        st.write(""" Once a ample amount of data is acquired you can prioritize the machine learning model""")
         # WACO ACCURACY
         waco_team_stats = cw.ml_clean(['WACO_2024.csv'])
         waco_matches = ['waco_matches.txt']
