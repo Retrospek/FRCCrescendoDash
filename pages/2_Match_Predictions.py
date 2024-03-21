@@ -108,8 +108,7 @@ try:
         #Predictive of all stats
         
 
-    except Exception as error:
-      st.write(error)
+    except:
       st.write("""# Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction.""")
         
     
