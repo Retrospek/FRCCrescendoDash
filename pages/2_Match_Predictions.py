@@ -10,7 +10,7 @@ st.set_page_config(page_title="Team Statistics and Predictions",
                    layout='wide')
 
 
-st.title("Team Statistics")
+st.title("Match Predictions")
 
 
 events = ['WACO_2024.csv','Fort Worth (1).csv', 'Custom']
