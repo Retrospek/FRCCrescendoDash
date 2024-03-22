@@ -260,7 +260,7 @@ def ml_data(all_matches, ml_team_stats):
             x_train.append(difference)
             y_train.append(result)
     return x_train, y_train
-
+@st.cache_data
 def ml_model(X_TRAIN, Y_TRAIN):
     X_train, X_test, y_train, y_test = train_test_split(X_TRAIN, Y_TRAIN, test_size=0.2, random_state=42)
     gb_clf = GradientBoostingClassifier(n_estimators=13, learning_rate=0.2, random_state=42)
@@ -313,13 +313,13 @@ def use_model(Red_teams, Blue_teams, stats_teams, accur_ml):
         st.write('Prediction: :red[RED]') 
     else:
         st.write('Prediction: :blue[BLUE]')
-
+@st.cache_data
 def test_model(X_TRAIN, Y_TRAIN):
     model = joblib.load('tourney.joblib')
     prediction = model.predict(X_TRAIN)
     accuracy = accuracy_score(Y_TRAIN, prediction)
     return accuracy
-
+@st.cache_data
 def test_stats_model(matches, team_stats):
     successes = 0
     waco = matches[0]
