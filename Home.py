@@ -26,6 +26,13 @@ def main():
     st.write("By: Arjun Mahableshwarkar")
 
     st.header("Gradient Boosted Output", divider='rainbow')
+
+    with st.expander("What is a Gradient Boosted Machine Learning Model?"):
+        st.write(""" 
+        A gradient boosted machine learning model is an ensemble learning method that iteratively combines the predictions of multiple individual models, typically decision trees, to improve overall performance. It starts by building a single decision tree to make predictions on the target variable. It then calculates the errors and creates a new decision tree to predict these errors, repeating this process iteratively. This approach allows the model to capture complex relationships in the data and make more accurate predictions. In the context of categorical classification, gradient boosting is particularly useful because it can handle categorical features directly, automatically handle missing data and outliers, and is robust to overfitting. These characteristics make it a powerful tool for effectively modeling and predicting categorical outcomes.
+        """)
+                 
+    
     st.markdown("All Tournament Accuracy: :green[94.26%]")
     st.markdown("FIT Waco Tournament Accuracy: :green[92.31%]")
     st.markdown("FIT Fort Worth Tournament Accuracy: :green[97.72%]")
