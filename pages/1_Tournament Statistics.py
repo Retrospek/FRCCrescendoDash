@@ -47,8 +47,7 @@ try:
 
 
 
-    st.write('''This page is dedicated to analyzing teams through match predictions satatistic based calculations, 
-            and other methods of choosing the right alliance partner''')
+    st.write('''This page is dedicated to analyzing teams through statistics''')
 
     st.plotly_chart(bubble)
 
