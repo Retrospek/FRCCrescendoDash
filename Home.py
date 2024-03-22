@@ -46,7 +46,7 @@ def main():
 
     st.header("Statistics Results", divider='rainbow')
     st.write("""My match predictions for the FRC District Event at Waco predicted the outcomes of 74.4% of all of the qualification matches.
-              This accuracy rate is 1.2% lower than that of Statbotics, which predicted matches with 75.6% accuracy. With this knowledge I looked into the idea of standardizing features so that there is less of a skew, so that numbers can be more accurate for a robot""")
+              This accuracy rate is 1.2% lower than that of Statbotics, which predicted matches with 75.6% accuracy. With this knowledge I looked into the idea of standardizing features so that there is less of a skew for a robot's performance.""")
               
 
     st.header("ML Results", divider='rainbow')
