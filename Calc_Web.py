@@ -348,7 +348,7 @@ def plot(team_stats):
     # Bubble Plot
     fig = px.scatter(df, x="AVG_AMP", y="AVG_SPEAKER",
 	         size="Win/Total", color="Team Number",
-                 hover_name="Team Number", log_x=True, title="Win/Total vs Avg Amp and Avg")
+                 hover_name="Team Number", log_x=True, title="Win/Total vs Avg Amp and Avg Speaker")
     #fig.update_traces(marker_size=10)
 
     return fig
