@@ -320,6 +320,32 @@ def test_model(X_TRAIN, Y_TRAIN):
     accuracy = accuracy_score(Y_TRAIN, prediction)
     return accuracy
 
+def test_stats_model(matches, team_stats):
+    successes = 0
+    waco = matches[0]
+    n = len(waco)
+    for i in range(len(waco)):
+        red1 = waco.iloc[i]['Red1']
+        red2 = waco.iloc[i]['Red2']
+        red3 = waco.iloc[i]['Red3']
+        blue1 = waco.iloc[i]['Blue1']
+        blue2 = waco.iloc[i]['Blue2']
+        blue3 = waco.iloc[i]['Blue3']
+        RedScore = waco.iloc[i]['RedScore']
+        BlueScore = waco.iloc[i]['BlueScore']
+
+        winner = 'red' if RedScore > BlueScore else 'blue'
+        blue, red = match_prediction(team_stats, red1,red2,red3,blue1,blue2,blue3)
+        prediction = 'red' if red > blue else 'blue'
+        if winner ==  prediction:
+            successes += 1
+        else:
+            st.write("Prediction: ", prediction)
+            st.write("Winner: ", winner)
+            st.write("match number", i + 1)
+    return successes/n
+
+
 @st.cache_data
 def plot(team_stats):
     avg_speaker = []
@@ -348,7 +374,7 @@ def plot(team_stats):
     # Bubble Plot
     fig = px.scatter(df, x="AVG_AMP", y="AVG_SPEAKER",
 	         size="Win/Total", color="Team Number",
-                 hover_name="Team Number", log_x=True, title="Win/Total vs Avg Amp and Avg Speaker")
+                 hover_name="Team Number", log_x=True, title="Win/Total vs Avg Amp and Avg")
     #fig.update_traces(marker_size=10)
 
     return fig
