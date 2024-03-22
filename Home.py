@@ -61,7 +61,7 @@ def main():
     st.header("ML Results", divider='rainbow')
     st.write("""My match predictions for the FRC District Event at Waco predicted 92.3% of the qualifications results. This accuracy beat both my statistics approach, by 7.3 percent, 
                 and the statbotics approach, with a 75.6% accuracy rate, by 16.4%""")
-    st.write("""The Machine Learning match predictor set an even higher bar by beating statbotics's aproach, which achieved an accuracy rate of 79%, by achieving a accuracy rate of 97.7%. This is a dramatic statistic as the model only missed 1 match out of the 44 that blue alliance posted""")
+    st.write("""The Machine Learning match predictor set an even higher bar at the Fort Worth tournament by beating statbotics's approach, which achieved an accuracy rate of 79%, by achieving a accuracy rate of 97.7%. This is a dramatic statistic as the model only missed 1 match out of the 44 that blue alliance posted""")
     st.write("""However, all ml models must face the frustrating obstacle of having a lack of data, so be cautious when consulting the ml predictions if you don't have an abundance of field records.
                 To combat this, I would recommend looking at the statistic based approach alongside the ml prediction.""")
     st.write(""" The issue is that if there is too little data, then the team-based statistics may not represent the real strength of a robot""")
