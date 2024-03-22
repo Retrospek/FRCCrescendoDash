@@ -46,10 +46,9 @@ try:
 
     teams = st.sidebar.multiselect("Team Tele-Op Trends: ", team_numbers)
     all = st.sidebar.checkbox("All Teams")
+    if all:
+        teams = team_numbers
     if len(teams) != 0:
-      if all:
-          teams = team_numbers
-  
       tele_amp = cw.tele_amp(data, teams=teams)
       tele_speaker = cw.tele_speaker(data, teams=teams)
       col1, col2 = st.columns(2)
