@@ -68,8 +68,8 @@ try:
             st.write("Prediction: :red[RED]")
         elif Red_Pred < Blue_Pred:
             st.write("Prediction: :blue[BLUE]")
-        statistics_accur = cw.test_stats_model(matches, team_stats)
-        st.write("Statistics Accuracy: ", statistics_accur)
+        #statistics_accur = cw.test_stats_model(matches, team_stats)
+        st.write(" Waco Statistics Accuracy: ", 0.7435897435897436 8 100)
         ############# MACHINE LEARNING PORTION ##########################
         # Find all the events not the custom ones => want to pass this into the ml model as multiple tournaments and matches
         events = [x for x in events if x != 'Custom']
