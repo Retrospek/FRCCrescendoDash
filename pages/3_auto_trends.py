@@ -48,7 +48,6 @@ try:
     all = st.sidebar.checkbox("All Teams")
     if all:
         teams = team_numbers
-    st.write(len(teams))
     if len(teams) != 0:
       auto_amp = cw.auto_amp(data, teams=teams)
       auto_speaker = cw.auto_speaker(data, teams=teams)
