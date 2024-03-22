@@ -51,7 +51,7 @@ def main():
     st.header("ML Results", divider='rainbow')
     st.write("""Before I explain the ml's accuracy of the matches, I want to ensure that everyone realizes that robot's are "affected" by each other. A key flaw in the statistics model is that it doesn't account for other robot's behaviours: bumping, defending, etc. This is why a machine learing model is so powerful as it can display the relationship between variables and how they effect each other""")
     st.write("""My match predictions for the FRC District Event at Waco predicted 92.3% of the qualifications results. This accuracy beat both my statistics approach, by 17.9% percent, 
-                and the statbotics approach, with a 75.6% accuracy rate, by 16.7%. This is huge as it destroyed previous predictive model by more than 15%!""")
+                and the statbotics approach, with a 75.6% accuracy rate, by 16.7%. This is huge as it destroyed the previous predictive models by more than 15%!""")
     st.write("""The Machine Learning match predictor set an even higher bar at the Fort Worth tournament by beating statbotics's approach, which achieved an accuracy rate of 79%, by achieving a accuracy rate of 97.7%. This is a crazy statistic as the model only missed 1 match out of the 44 that blue alliance posted""")
     st.write("""However, all ml models must face the frustrating obstacle of having a lack of data, so be cautious when consulting the ml predictions if you don't have an abundance of field records.
                 To combat this, I would recommend looking at the statistic based approach alongside the ml prediction.""")
