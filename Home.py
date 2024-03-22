@@ -34,7 +34,7 @@ def main():
         """)
                  
     
-    st.markdown("All Tournament Accuracy: :green[94.26%]")
+    st.markdown("All Tournament Accuracy: :green[93.57%]")
     st.markdown("FIT Waco Tournament Accuracy: :green[92.31%]")
     st.markdown("FIT Fort Worth Tournament Accuracy: :green[95.16%]")
     
