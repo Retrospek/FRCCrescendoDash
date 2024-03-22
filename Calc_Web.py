@@ -339,8 +339,7 @@ def test_stats_model(matches, team_stats):
         prediction = 'red' if red > blue else 'blue'
         if winner ==  prediction:
             successes += 1
-	else:
-	    pass
+		
     return successes/n
 
 
