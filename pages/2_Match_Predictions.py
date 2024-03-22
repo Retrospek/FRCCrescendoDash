@@ -96,7 +96,7 @@ try:
         w_matches = cw.get_matches_cleaned(waco_matches)
         X_train, Y_train = cw.ml_data(w_matches, waco_team_stats)
         waco_accur = cw.test_model(X_train,Y_train)
-        st.write("WACO Accuracy", waco_accur)
+        st.write(":green[WACO Accuracy]", waco_accur)
 
         # Fort Worth ACCURACY
         fw_team_stats = cw.ml_clean(['Fort Worth (1).csv'])
@@ -104,7 +104,7 @@ try:
         fw_matches = cw.get_matches_cleaned(fort_matches)
         X_train, Y_train = cw.ml_data(fw_matches, fw_team_stats)
         fw_accur = cw.test_model(X_train,Y_train)
-        st.write("Fort Worth Accuracy", fw_accur)
+        st.write(":green[Fort Worth Accuracy]", fw_accur)
         #Predictive of all stats
         
 
