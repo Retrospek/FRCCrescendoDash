@@ -7,7 +7,7 @@ def main():
     
 
     st.set_page_config(
-        page_title="Hello",
+        page_title="FRC Crescendo Dash",
         page_icon="chart_with_upwards_trend",
         layout='wide'
     )
