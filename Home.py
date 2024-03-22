@@ -31,20 +31,7 @@ def main():
     st.markdown("FIT Fort Worth Tournament Accuracy: :green[97.72%]")
     
     st.header("Set-Up Before WACO", divider='rainbow')
-    st.write("""I wanted to create a scouting prediction app that would take the likelyhood of
-            any given 3 teams beating any other 3 teams. To accomplish this, I researched how to 
-            compare two comparable averages and standard deviations. Additionally, 
-            I had experience in neural networks and because this was 
-            a predictive task, I thought that perhaps some level of ML or even deep
-            learning could be used. However, I ran into the issue of a lack of data, and I quickly
-            realized that in order for me to create a predictive model that took at least 4 attributes 
-            that it would need approximately 40 data inputs, according to the 10x rule
-            . With this knowledge, I instead went towards a more statistics based approach.
-            The method of using a normal cumumalitive distribution function required normalized data
-            . Knowing this I delved into past matches, and proved that as a team progresses throughout
-            a tournament it will have a normally distributed graph of data points that represent points scored.
-            Knowing this I generated a cumulative average and standard deviation for each of the alliances and 
-            applied the norm.cdf function to calculate the possibility of the Blue team winning. """)
+    st.write("""I wanted to create a scouting prediction app that would take the likelihood of any given 3 teams beating any other 3 teams. To accomplish this, I researched how to compare two comparable averages and standard deviations. Additionally, I had experience in neural networks and because this was a predictive task, I thought that perhaps some level of ML or even deep learning could be used. However, I ran into the issue of a lack of data, and I quickly realized that for me to create a predictive model that took at least 4 attributes it would need approximately 40 data inputs, according to the 10x rule. With this knowledge, I instead went towards a more statistics-based approach. The method of using a normal cumulative distribution function required normalized data. Knowing this I delved into past matches and proved that as a team progresses throughout a tournament it will have a normally distributed graph of data points that represent points scored. Knowing this I generated a cumulative average and standard deviation for each of the alliances and applied the norm.cdf function to calculate the possibility of the Blue team winning. """)
     st.header("Set-Up After Waco", divider='rainbow')
     st.write("""After Waco, there was more data for me to use, and after requesting for a new field to be added to the dataset, who won or lost, I was able to finally approach an ml method of solving match prediction problems.
                 With this better data, I found out how to create a dynamic pattern between each team by taking their standardized scores between 0 and 1 to solve field-heavy ml tasks.
