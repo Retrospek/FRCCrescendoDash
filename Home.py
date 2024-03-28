@@ -24,7 +24,7 @@ def main():
     st.markdown("""This app's main function is to provide statistics that i've assembeled from FRC Crescendo 2024 data. 
                 Additionally, I've done feature engineering to create more insightful data for any user coming here""")
 
-    st.write("By: Arjun Mahableshwarkar")
+    st.write(":rainbow[By: Arjun Mahableshwarkar]")
 
     st.header("Gradient Boosted Output", divider='rainbow')
 
