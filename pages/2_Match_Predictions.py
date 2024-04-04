@@ -116,7 +116,8 @@ try:
         
     
 
-except:
+except Exception as error:
+    st.write(error)
     pass
 
 
