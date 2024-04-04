@@ -28,6 +28,7 @@ if Data_Choice == 'Custom':
     Data_Provided = st.file_uploader("Your DataSet")
     try:
         st.session_state.data = Data_Provided
+        st.write(st.session_state.data)
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
         team_stats = cw.team_desc(Data=data)
     except:
