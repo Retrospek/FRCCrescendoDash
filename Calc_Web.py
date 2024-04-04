@@ -99,13 +99,11 @@ def team_desc(Data):
         team_stats.loc[i, 'AVG_SPEAKER_AUTO'] = Team_DF['auto_spk_scored'].describe()[1]
         team_stats.loc[i, 'AVG_AMP_TELE'] = Team_DF['tele_amp_scored'].describe()[1]
         team_stats.loc[i, 'AVG_SPEAKER_TELE'] = Team_DF['tele_spk_scored'].describe()[1]
-        team_stats.loc[i, 'AVG_AMPLIF_TELE'] = Team_DF['speaker_scored_amped'].describe()[1]
         
         team_stats.loc[i, 'STD_AMP_AUTO'] = Team_DF['auto_amp_scored'].describe()[2]
         team_stats.loc[i, 'STD_SPEAKER_AUTO'] = Team_DF['auto_spk_scored'].describe()[2]
         team_stats.loc[i, 'STD_AMP_TELE'] = Team_DF['tele_amp_scored'].describe()[2]
         team_stats.loc[i, 'STD_SPEAKER_TELE'] = Team_DF['tele_spk_scored'].describe()[2]
-        team_stats.loc[i, 'STD_AMPLIF_TELE'] = Team_DF['speaker_scored_amped'].describe()[2]
 
 
         team_stats.loc[i, 'Win/Total'] = team_wins/team_total
@@ -113,12 +111,10 @@ def team_desc(Data):
     team_stats['AVG_SPEAKER_AUTO'].fillna(0, inplace=True)
     team_stats['AVG_AMP_TELE'].fillna(0, inplace=True)
     team_stats['AVG_SPEAKER_TELE'].fillna(0, inplace=True)
-    team_stats['AVG_AMPLIF_TELE'].fillna(0, inplace=True)
     team_stats['STD_AMP_AUTO'].fillna(0, inplace=True)
     team_stats['STD_SPEAKER_AUTO'].fillna(0, inplace=True)
     team_stats['STD_AMP_TELE'].fillna(0, inplace=True)
     team_stats['STD_SPEAKER_TELE'].fillna(0, inplace=True)
-    team_stats['STD_AMPLIF_TELE'].fillna(0, inplace=True)
     team_stats['Win/Total'].fillna(0, inplace=True)
     for j in range(len(team_stats)):
         #if team_stats.at[j, 'Team Number'] == 1234:    
