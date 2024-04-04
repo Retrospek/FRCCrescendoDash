@@ -32,7 +32,7 @@ if Data_Choice == 'Custom':
         st.write(data)
         team_stats = cw.team_desc(Data=data)
     except Exception as error:
-        st.write(error)
+        
         st.error("Please Enter Your Data")
 
 else:
@@ -41,7 +41,7 @@ else:
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
         team_stats = cw.team_desc(Data=data)
     except Exception as error:
-        st.write(error)
+      
         st.error("Not Custom")
 
 st.write("""Use a dataset specific to a competition so past results don't skew future results""")
@@ -115,13 +115,13 @@ try:
         
 
     except Exception as error:
-      st.write(error)
+      
       st.write("""# Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction.""")
         
     
 
 except Exception as error:
-    st.write(error)
+    
     pass
 
 
