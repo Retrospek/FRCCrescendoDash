@@ -94,7 +94,7 @@ def team_desc(Data):
     for i in range(len(team_stats)):
         team = team_stats.at[i, 'Team Number']
         Team_DF = Data.loc[Data['team_#'] == team]
-        team_wins = len(Team_DF.loc[Team_DF['win'] == 'Yes'])
+        team_wins = len(Team_DF.loc[Team_DF['Result'] == 'Yes'])
         team_total = len(Team_DF)
         team_stats.loc[i, 'AVG_AMP_AUTO'] = Team_DF['auto_amp_scored'].describe()[1]
         team_stats.loc[i, 'AVG_SPEAKER_AUTO'] = Team_DF['auto_spk_scored'].describe()[1]
