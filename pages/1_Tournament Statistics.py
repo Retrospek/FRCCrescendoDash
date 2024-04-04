@@ -38,7 +38,6 @@ else:
     except:
         st.error("Not Custom")
 
-st.dataframe(data.loc[data['team_#'] == 2468])
 
 #test = "WACO_2024.csv"
 try:
