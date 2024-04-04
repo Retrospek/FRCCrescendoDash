@@ -31,7 +31,8 @@ if Data_Choice == 'Custom':
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
         st.write(data)
         team_stats = cw.team_desc(Data=data)
-    except:
+    except Exception as error:
+        st.write(error)
         st.error("Please Enter Your Data")
 
 else:
