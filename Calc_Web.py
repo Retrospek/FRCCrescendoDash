@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import math
+import re
 import matplotlib.pyplot as plt
 import random
 import scipy.integrate as integrate
@@ -21,12 +22,16 @@ import base64
 from PIL import Image
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.datasets import make_classification
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn import svm
 from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.metrics.pairwise import euclidean_distances
+
 #import tensorflow as tf
 #from keras .models import Sequential
 #from keras .layers import Dense
@@ -41,6 +46,7 @@ def get_clean_data(data):
 
     attributes = ['tele_spk_scored', 'tele_amp_scored', 'speaker_scored_amped']
     for i in range(len(default)):
+        
         for j in range(len(attributes)):
             if pd.isna(default.loc[i, attributes[j]]):# or len(default.at[i, attributes[j]]) == 0:
                 default.at[i,attributes[j]] = 0
@@ -89,6 +95,12 @@ def team_desc(Data):
     team_stats.insert(11, 'Predicted Score', 0)
     team_stats.insert(12, 'Score Variability', 0)
     team_stats.insert(13, 'Win/Total', 0)
+
+    ################# LAZZZZZZZZZZY
+
+    #team_stats.insert(14, 'AVG_HANG_SUCCESS',0)
+    #team_stats.insert(15, 'STD_HANG_SUCCESS', 0)
+
     for i in range(len(team_stats)):
         team = team_stats.at[i, 'Team Number']
         Team_DF = Data.loc[Data['team_#'] == team]
@@ -99,7 +111,7 @@ def team_desc(Data):
         team_stats.loc[i, 'AVG_AMP_TELE'] = Team_DF['tele_amp_scored'].describe()[1]
         team_stats.loc[i, 'AVG_SPEAKER_TELE'] = Team_DF['tele_spk_scored'].describe()[1]
         team_stats.loc[i, 'AVG_AMPLIF_TELE'] = Team_DF['speaker_scored_amped'].describe()[1]
-
+        
         team_stats.loc[i, 'STD_AMP_AUTO'] = Team_DF['auto_amp_scored'].describe()[2]
         team_stats.loc[i, 'STD_SPEAKER_AUTO'] = Team_DF['auto_spk_scored'].describe()[2]
         team_stats.loc[i, 'STD_AMP_TELE'] = Team_DF['tele_amp_scored'].describe()[2]
@@ -137,7 +149,7 @@ def match_prediction(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
     asked_teams_avg = [0,0,0,0,0,0]
     asked_teams_std = [0,0,0,0,0,0]
     
-    for team in range(len(asked_teams)):   
+    for team in range(len(asked_teams)):  
         alliateam = team_stats.loc[team_stats['Team Number'] == asked_teams[team]]
         if team <= 2:
             RedAllianceAvg += alliateam['Predicted Score'].iloc[0]
@@ -249,10 +261,9 @@ def ml_data(all_matches, ml_team_stats):
                         RedAlliance.append(Red1[attribute].iloc[0] + Red2[attribute].iloc[0] + Red3[attribute].iloc[0])
                         BlueAlliance.append(Blue1[attribute].iloc[0] + Blue2[attribute].iloc[0] + Blue3[attribute].iloc[0])
                         
-            
             difference = [x - y for x, y in zip(RedAlliance, BlueAlliance)]
             result = []
-
+            
             if aggreg.at[i, 'Winner'] == 'Red':
                 result.append(0)
             else:
@@ -260,7 +271,7 @@ def ml_data(all_matches, ml_team_stats):
             x_train.append(difference)
             y_train.append(result)
     return x_train, y_train
-@st.cache_data
+
 def ml_model(X_TRAIN, Y_TRAIN):
     X_train, X_test, y_train, y_test = train_test_split(X_TRAIN, Y_TRAIN, test_size=0.2, random_state=42)
     gb_clf = GradientBoostingClassifier(n_estimators=13, learning_rate=0.2, random_state=42)
@@ -313,19 +324,19 @@ def use_model(Red_teams, Blue_teams, stats_teams, accur_ml):
         st.write('Prediction: :red[RED]') 
     else:
         st.write('Prediction: :blue[BLUE]')
-@st.cache_data
+
 def test_model(X_TRAIN, Y_TRAIN):
     model = joblib.load('tourney.joblib')
     prediction = model.predict(X_TRAIN)
     accuracy = accuracy_score(Y_TRAIN, prediction)
     return accuracy
-@st.cache_data
+
 def test_stats_model(matches, team_stats):
     successes = 0
     waco = matches[0]
     n = len(waco)
     for i in range(len(waco)):
-        red1 = waco.iloc[i]['Red1']
+        red1 = int(waco.iloc[i]['Red1'])
         red2 = waco.iloc[i]['Red2']
         red3 = waco.iloc[i]['Red3']
         blue1 = waco.iloc[i]['Blue1']
@@ -339,9 +350,183 @@ def test_stats_model(matches, team_stats):
         prediction = 'red' if red > blue else 'blue'
         if winner ==  prediction:
             successes += 1
-		
     return successes/n
 
+@st.cache_data
+def ml_melod_match_data(team_stats):
+    file = 'waco_new_matches.txt'
+    tourney = pd.DataFrame(columns=['Red1', 'Red2', 'Red3', 'Blue1', 'Blue2', 'Blue3', 'RedScore', 'BlueScore', 're', 'rm', 'be', 'bm'])
+    with open(file=file,mode='r') as f:
+        line_count = 0
+        rows = []
+        for line in f:
+            line_count +=1
+            if line_count %2 == 0:
+                values = re.findall(r'\d+', line)
+                numbers = [float(value) for value in values if value.replace('.', '', 1).isdigit()]
+                # Append the new DataFrame to the total_df
+                if len(numbers) == len(tourney.columns):
+                    # Append the numbers as a new row to the DataFrame
+                    tourney.loc[len(tourney)] = numbers
+    return tourney
+
+@st.cache_data
+def ml_melody_model(team_stats):
+    matches = ml_melod_match_data(team_stats=team_stats)
+    train_input = []
+    train_output = []
+    for i in range(len(matches)):
+        row = matches.iloc[i]
+        Red1 = team_stats.loc[team_stats['Team Number'] == row['Red1']]
+        Red2 = team_stats.loc[team_stats['Team Number'] == row['Red2']]
+        Red3 = team_stats.loc[team_stats['Team Number'] == row['Red3']]
+        Blue1 = team_stats.loc[team_stats['Team Number'] == row['Blue1']]
+        Blue2 = team_stats.loc[team_stats['Team Number'] == row['Blue1']]
+        Blue3 = team_stats.loc[team_stats['Team Number'] == row['Blue1']]
+        rm_outcome = row['rm']
+        bm_outcome = row['bm']
+        train_output.append(rm_outcome)
+        train_output.append(bm_outcome)
+        red_spk_avg = Red1['AVG_SPEAKER_TELE'].iloc[0] + Red2['AVG_SPEAKER_TELE'].iloc[0] + Red3['AVG_SPEAKER_TELE'].iloc[0]
+        red_amp_avg = Red1['AVG_AMP_TELE'].iloc[0] + Red2['AVG_AMP_TELE'].iloc[0] + Red3['AVG_AMP_TELE'].iloc[0]
+        red_avg_notes = float(red_spk_avg + red_amp_avg)
+        red_notes_std = float(math.sqrt(pow(Red1['STD_AMP_TELE'].iloc[0],2) + pow(Red2['STD_AMP_TELE'].iloc[0],2) + pow(Red3['STD_AMP_TELE'].iloc[0],2) + pow(Red1['STD_SPEAKER_TELE'].iloc[0],2) + pow(Red2['STD_SPEAKER_TELE'].iloc[0],2) + pow(Red3['STD_SPEAKER_TELE'].iloc[0],2)))    
+        train_input.append([red_avg_notes, red_notes_std])
+        blue_spk_avg = Blue1['AVG_SPEAKER_TELE'].iloc[0] + Blue2['AVG_SPEAKER_TELE'].iloc[0] + Blue2['AVG_SPEAKER_TELE'].iloc[0]
+        blue_amp_avg = Blue1['AVG_AMP_TELE'].iloc[0] + Blue2['AVG_AMP_TELE'].iloc[0] + Blue2['AVG_AMP_TELE'].iloc[0]
+        blue_avg_notes = float(blue_spk_avg + blue_amp_avg)
+        blue_notes_std = float(math.sqrt(pow(Blue1['STD_AMP_TELE'].iloc[0],2) + pow(Blue2['STD_AMP_TELE'].iloc[0],2) + pow(Blue3['STD_AMP_TELE'].iloc[0],2) + pow(Blue1['STD_SPEAKER_TELE'].iloc[0],2) + pow(Blue2['STD_SPEAKER_TELE'].iloc[0],2) + pow(Blue3['STD_SPEAKER_TELE'].iloc[0],2)))
+        train_input.append([blue_avg_notes, blue_notes_std])
+    X_train, X_test, Y_train, Y_test = train_test_split(train_input, train_output, test_size=0.2)
+
+    clf = KNeighborsClassifier(metric='euclidean', n_neighbors=8, weights='uniform')
+    #metric='euclidean', n_neighbors=8, weights='uniform'
+    #weights='distance', n_neighbors=4
+
+    clf.fit(X_train, Y_train)
+    y_pred = clf.predict(X_test)
+    accur = accuracy_score(Y_test, y_pred)
+    st.write(accur)
+
+    param_grid = {
+        'n_neighbors': [3,5,7,9, 11, 13],
+        'weights': ['uniform', 'distance'],
+        'metric': ['euclidean', 'manhattan']
+    }
+    
+    grid_search = GridSearchCV(clf, param_grid=param_grid, cv=5, n_jobs=1)
+
+    grid_search.fit(X_train, Y_train)
+
+    st.write(grid_search.score(X_test, Y_test))
+    st.write(grid_search.best_params_)
+
+@st.cache_data
+def melody_rp(red1, red2, red3, blue1, blue2, blue3, team_stats):
+    Red1 = team_stats.loc[team_stats['Team Number'] == red1]
+    Red2 = team_stats.loc[team_stats['Team Number'] == red2]
+    Red3 = team_stats.loc[team_stats['Team Number'] == red3]
+    Blue1 = team_stats.loc[team_stats['Team Number'] == blue1]
+    Blue2 = team_stats.loc[team_stats['Team Number'] == blue2]
+    Blue3 = team_stats.loc[team_stats['Team Number'] == blue3]
+    red_spk_avg = Red1['AVG_SPEAKER_TELE'].iloc[0] + Red2['AVG_SPEAKER_TELE'].iloc[0] + Red3['AVG_SPEAKER_TELE'].iloc[0]
+    red_amp_avg = Red1['AVG_AMP_TELE'].iloc[0] + Red2['AVG_AMP_TELE'].iloc[0] + Red3['AVG_AMP_TELE'].iloc[0]
+    red_avg_notes = red_spk_avg + red_amp_avg
+    red_notes_std = math.sqrt(pow(Red1['STD_AMP_TELE'].iloc[0],2) + pow(Red2['STD_AMP_TELE'].iloc[0],2) + pow(Red3['STD_AMP_TELE'].iloc[0],2) + pow(Red1['STD_SPEAKER_TELE'].iloc[0],2) + pow(Red2['STD_SPEAKER_TELE'].iloc[0],2) + pow(Red3['STD_SPEAKER_TELE'].iloc[0],2))
+    red_melo = norm.cdf((18-red_avg_notes)/red_notes_std)
+
+
+    blue_spk_avg = Blue1['AVG_SPEAKER_TELE'].iloc[0] + Blue2['AVG_SPEAKER_TELE'].iloc[0] + Blue2['AVG_SPEAKER_TELE'].iloc[0]
+    blue_amp_avg = Blue1['AVG_AMP_TELE'].iloc[0] + Blue2['AVG_AMP_TELE'].iloc[0] + Blue2['AVG_AMP_TELE'].iloc[0]
+    blue_avg_notes = blue_spk_avg + blue_amp_avg
+    blue_notes_std = math.sqrt(pow(Blue1['STD_AMP_TELE'].iloc[0],2) + pow(Blue2['STD_AMP_TELE'].iloc[0],2) + pow(Blue3['STD_AMP_TELE'].iloc[0],2) + pow(Blue1['STD_SPEAKER_TELE'].iloc[0],2) + pow(Blue2['STD_SPEAKER_TELE'].iloc[0],2) + pow(Blue3['STD_SPEAKER_TELE'].iloc[0],2))
+    blue_melo = norm.cdf((18-blue_avg_notes)/blue_notes_std)
+
+    st.write("Red Melody Chance", red_melo)
+    st.write("Blue Melod Chance", blue_melo)
+
+
+#def harmony_rp(red1, red2, red3, blue1, blue2, blue3, team_stats):
+def sort_df_row_LTG(row):
+    temp = row.copy().values
+    attributes = row.columns
+    LTG = []
+    for _ in range(len(temp)):
+        LTG.append(attributes[temp.argmin()])
+        temp = np.delete(temp, temp.argmin())
+    return LTG    
+
+@st.cache_data
+def mst_sim_rbt(team, team_stats):
+    team_statistics = team_stats.copy()
+    team_number = team_statistics['Team Number']
+    # Drop the 'Team Number' column from team_statistics
+    team_statistics.drop(columns=['Team Number', 'Win/Total', 'AVG_AMPLIF_TELE', 'STD_AMPLIF_TELE'], inplace=True)
+    # Scale the remaining columns using MinMaxScaler
+    scaler = MinMaxScaler()
+
+    #Apply Weights
+
+    team_standardized = pd.DataFrame(scaler.fit_transform(team_statistics), columns=team_statistics.columns).values
+    weights = np.array([0.025,0.05,0.1,0.25,0.025,0.075,0.075,0.1,0.15,0.15])
+    broadcast_weights = np.tile(weights, (team_standardized.shape[0],1))
+    weighed_array = team_standardized * broadcast_weights
+    team_standardized = pd.DataFrame(weighed_array, columns=team_statistics.columns)
+    #teams_weighted = 
+
+    """
+    AVG_AMP_AUTO - 0.025
+    AVG_SPEAKER_AUTO - 0.05
+    AVG_AMP_TELE - 0.1
+    AVG_SPEAKER_TELE 0.25
+    STD_AMP_AUTO - 0.025
+    STD_SPEAKER_AUTO- 0.075
+    STD_AMP_TELE0 - .075
+    STD_SPEAKER_TELE - 0.1
+    Predicted Score - 0.15
+    Score Variability - 0.15
+    """
+
+    # Add back the 'Team Number' column
+    team_standardized['Team Number'] = team_number
+    # Reorder columns to original order
+    team_standardized = team_standardized[['Team Number'] + [col for col in team_standardized.columns if col != 'Team Number']]
+    
+    team_vect = team_standardized.loc[team_standardized['Team Number'] == team].drop(columns=['Team Number'])
+    features = team_standardized.loc[team_standardized['Team Number'] == team].drop(columns=['Team Number']).columns
+    #st.write(features)
+    rankings = []
+    for i in range(len(team_standardized)):
+        comp_team = team_standardized.iloc[i]['Team Number']
+        comp_team_vec = team_standardized.iloc[i].drop(labels='Team Number')
+        attribute_similarity = (team_vect - comp_team_vec).abs()
+
+        #st.write(attribute_similarity.min())
+        #st.write("X", attribute_similarity)
+        #st.write("Y", comp_team_vec.values)
+        #st.write("Z", team_vect.values)
+        #low = sort_df_row_LTG(attribute_similarity)
+        distance = euclidean_distances(team_vect.values, [comp_team_vec.values])
+        team_and_distance = [comp_team, distance, attribute_similarity]
+        rankings.append(team_and_distance)  
+    rankings = sorted(rankings, key=lambda x: x[1])[0:5] 
+    list(map(lambda x: st.write(x[0], x[1], "Difference Row: ",x[2]), rankings))
+
+
+
+    ############ 0 1 complete ###########
+    #Euclidean Distances
+
+    
+    #Considerations:
+    #Hang avg, trap avg, std.devs for all, successful multiple hangs :-(2,3) ;;; 
+    #FE
+    #STD
+    #split
+    #train
+    #test
+    #team_specific = team_stats.loc[team_stats['Team Number'] == team]
+    #features = 
 
 @st.cache_data
 def plot(team_stats):
