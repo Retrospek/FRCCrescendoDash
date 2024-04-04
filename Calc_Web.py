@@ -64,16 +64,6 @@ def get_clean_data(data):
     default.replace({"auto_amp_scored": dict})
     default.replace({"auto_amp_scored": dict})
 
-    times = ['AMPLIFIED', 'amplified_closed']
-    for r in range(len(default)):
-        for c in range(len(times)):
-            if pd.isna(default.loc[r, times[c]]):
-                default.at[r, times[c]] == [-1]
-            else:
-                try:
-                    default.loc[r, times[c]] = default.at[r, times[c]].split('|')
-                except:
-                    default.loc[r, times[c]] = [-1]
     return default
 #team_stats = pd.DataFrame(columns=['Team-Number', 'AVG_AMP_AUTO', 'AVG_SPEAKER_AUTO', 'AVG_AMP_TELE', 'AVG_SPEAKER_TELE', 'STD_AMP_AUTO', 'STD_SPEAKER_AUTO', 'STD_AMP_TELE', 'STD_SPEAKER_TELE' ])
 
