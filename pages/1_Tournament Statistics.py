@@ -38,7 +38,7 @@ else:
     except:
         st.error("Not Custom")
 
-
+st.dataframe(data.loc[data['team_#'] == 2468])
 
 #test = "WACO_2024.csv"
 try:
@@ -47,7 +47,8 @@ try:
 
 
 
-    st.write('''This page is dedicated to analyzing teams through statistics''')
+    st.write('''This page is dedicated to analyzing teams through match predictions satatistic based calculations, 
+            and other methods of choosing the right alliance partner''')
 
     st.plotly_chart(bubble)
 
@@ -58,11 +59,26 @@ try:
     teamstat = team_stats[team_stats['Team Number'].isin(teams)]
 
     teamstat['Team Number'] = teamstat['Team Number'].astype(int)
+
+    teamstat.drop('Score Variability', axis=1)
+
     st.markdown("# :blue[Specific Team Statistics]")
-    team_stat = teamstat.style.highlight_max(axis=0)
+
+    st.dataframe(teamstat.style.highlight_max(axis=0))
+
+    with st.expander("# Similar Team List"):
+        most_sim_robo = st.selectbox("Team Similar to the one Provided: ",options=team_stats['Team Number'].unique())
+        cw.mst_sim_rbt(most_sim_robo, team_stats)
+
+        
+
     
-    st.dataframe(team_stat)
+
+    ############
+    #ML MODEL
+    ############
+
+    
+
 except:
   pass
-
-
