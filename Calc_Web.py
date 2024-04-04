@@ -510,7 +510,7 @@ def mst_sim_rbt(team, team_stats):
         team_and_distance = [comp_team, distance, attribute_similarity]
         rankings.append(team_and_distance)  
     rankings = sorted(rankings, key=lambda x: x[1])[0:5] 
-    list(map(lambda x: st.write(x[0], x[1], "Difference Row: ",x[2]), rankings))
+    list(map(lambda x: st.write(f':red[{str(x[0])}]', x[1], "Difference Row: ",x[2]), rankings))
 
 
 
