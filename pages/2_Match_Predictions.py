@@ -40,7 +40,8 @@ else:
     try:
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
         team_stats = cw.team_desc(Data=data)
-    except:
+    except Exception as error:
+        st.write(error)
         st.error("Not Custom")
 
 st.write("""Use a dataset specific to a competition so past results don't skew future results""")
