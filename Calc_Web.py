@@ -80,11 +80,10 @@ def team_desc(Data):
     team_stats.insert(6,'STD_SPEAKER_AUTO', 0)
     team_stats.insert(7,'STD_AMP_TELE', 0)
     team_stats.insert(8,'STD_SPEAKER_TELE', 0)
-    team_stats.insert(9, 'AVG_AMPLIF_TELE', 0)
-    team_stats.insert(10, 'STD_AMPLIF_TELE', 0)
-    team_stats.insert(11, 'Predicted Score', 0)
-    team_stats.insert(12, 'Score Variability', 0)
-    team_stats.insert(13, 'Win/Total', 0)
+    
+    team_stats.insert(9, 'Predicted Score', 0)
+    team_stats.insert(10, 'Score Variability', 0)
+    team_stats.insert(11, 'Win/Total', 0)
 
     ################# LAZZZZZZZZZZY
 
