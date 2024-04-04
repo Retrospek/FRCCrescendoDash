@@ -44,7 +44,7 @@ def get_clean_data(data):
     
     default = data
 
-    attributes = ['tele_spk_scored', 'tele_amp_scored', 'speaker_scored_amped']
+    attributes = ['tele_spk_scored', 'tele_amp_scored']
     for i in range(len(default)):
         
         for j in range(len(attributes)):
