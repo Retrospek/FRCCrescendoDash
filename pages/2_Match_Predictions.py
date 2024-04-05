@@ -31,8 +31,7 @@ if Data_Choice == 'Custom':
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
         team_stats = cw.team_desc(Data=data)
     except:
-        st.error("Please Enter Your Data")
-
+        pass
 else:
     st.session_state.data = Data_Choice
     try:
@@ -117,7 +116,6 @@ try:
         #cw.ml_melody_model(team_stats=team_stats)
         #cw.use_melody_model(Red1,Red2,Red3,Blue1,Blue2,Blue3,team_stats=team_stats)
     except Exception as error:
-      st.write(error)
       st.write("""# Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction.""")
         
     
