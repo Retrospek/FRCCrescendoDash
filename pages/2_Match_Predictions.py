@@ -23,7 +23,6 @@ if st.session_state.data not in events:
     st.session_state.data = 'WACO_2024.csv'
 
 Data_Choice = st.selectbox('DataSet:', events, index = events.index(st.session_state.data))
-st.write(events)
 if Data_Choice == 'Custom':
     Data_Provided = st.file_uploader("Your DataSet")
     try:
