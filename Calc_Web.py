@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import math
 import re
+import os
 import matplotlib.pyplot as plt
 import random
 import scipy.integrate as integrate
@@ -80,7 +81,6 @@ def team_desc(Data):
     team_stats.insert(6,'STD_SPEAKER_AUTO', 0)
     team_stats.insert(7,'STD_AMP_TELE', 0)
     team_stats.insert(8,'STD_SPEAKER_TELE', 0)
-    
     team_stats.insert(9, 'Predicted Score', 0)
     team_stats.insert(10, 'Score Variability', 0)
     team_stats.insert(11, 'Win/Total', 0)
@@ -93,7 +93,13 @@ def team_desc(Data):
     for i in range(len(team_stats)):
         team = team_stats.at[i, 'Team Number']
         Team_DF = Data.loc[Data['team_#'] == team]
-        team_wins = len(Team_DF.loc[Team_DF['Result'] == 'Yes'])
+        result_map = {'Win': 'Yes', 'Lose': 'No', 'Tie': 'No'}
+        try:
+            Team_DF['win'] = Team_DF['Result'].map(result_map)
+        except:
+            pass
+        team_wins = len(Team_DF.loc[Team_DF['win'] == 'Yes'])
+
         team_total = len(Team_DF)
         team_stats.loc[i, 'AVG_AMP_AUTO'] = Team_DF['auto_amp_scored'].describe()[1]
         team_stats.loc[i, 'AVG_SPEAKER_AUTO'] = Team_DF['auto_spk_scored'].describe()[1]
@@ -241,7 +247,6 @@ def ml_data(all_matches, ml_team_stats):
                     if attribute == 'VARIABILITY':
                         RedAlliance.append(math.sqrt(pow(Red1[attribute].iloc[0], 2)+pow(Red2[attribute].iloc[0], 2)+pow(Red3[attribute].iloc[0], 2)))
                         BlueAlliance.append(math.sqrt(pow(Blue1[attribute].iloc[0], 2)+pow(Blue2[attribute].iloc[0], 2)+pow(Blue3[attribute].iloc[0], 2)))
-
                     else:
                         RedAlliance.append(Red1[attribute].iloc[0] + Red2[attribute].iloc[0] + Red3[attribute].iloc[0])
                         BlueAlliance.append(Blue1[attribute].iloc[0] + Blue2[attribute].iloc[0] + Blue3[attribute].iloc[0])
@@ -355,7 +360,6 @@ def ml_melod_match_data(team_stats):
                     tourney.loc[len(tourney)] = numbers
     return tourney
 
-@st.cache_data
 def ml_melody_model(team_stats):
     matches = ml_melod_match_data(team_stats=team_stats)
     train_input = []
@@ -372,6 +376,7 @@ def ml_melody_model(team_stats):
         bm_outcome = row['bm']
         train_output.append(rm_outcome)
         train_output.append(bm_outcome)
+        
         red_spk_avg = Red1['AVG_SPEAKER_TELE'].iloc[0] + Red2['AVG_SPEAKER_TELE'].iloc[0] + Red3['AVG_SPEAKER_TELE'].iloc[0]
         red_amp_avg = Red1['AVG_AMP_TELE'].iloc[0] + Red2['AVG_AMP_TELE'].iloc[0] + Red3['AVG_AMP_TELE'].iloc[0]
         red_avg_notes = float(red_spk_avg + red_amp_avg)
@@ -383,29 +388,61 @@ def ml_melody_model(team_stats):
         blue_notes_std = float(math.sqrt(pow(Blue1['STD_AMP_TELE'].iloc[0],2) + pow(Blue2['STD_AMP_TELE'].iloc[0],2) + pow(Blue3['STD_AMP_TELE'].iloc[0],2) + pow(Blue1['STD_SPEAKER_TELE'].iloc[0],2) + pow(Blue2['STD_SPEAKER_TELE'].iloc[0],2) + pow(Blue3['STD_SPEAKER_TELE'].iloc[0],2)))
         train_input.append([blue_avg_notes, blue_notes_std])
     X_train, X_test, Y_train, Y_test = train_test_split(train_input, train_output, test_size=0.2)
+    
+    max_accur = 0
+    clf = GradientBoostingClassifier(n_estimators=11, learning_rate=0.27, random_state=42)
 
-    clf = KNeighborsClassifier(metric='euclidean', n_neighbors=8, weights='uniform')
     #metric='euclidean', n_neighbors=8, weights='uniform'
     #weights='distance', n_neighbors=4
 
     clf.fit(X_train, Y_train)
     y_pred = clf.predict(X_test)
     accur = accuracy_score(Y_test, y_pred)
-    st.write(accur)
+        
+    joblib.dump(clf, 'ml_melody_model.joblib')
 
-    param_grid = {
-        'n_neighbors': [3,5,7,9, 11, 13],
-        'weights': ['uniform', 'distance'],
-        'metric': ['euclidean', 'manhattan']
-    }
+    check_pred = clf.predict(X_test)
+    check_accur = accuracy_score(Y_test, check_pred) 
+    st.write(f'Melody RP Accuracy :blue[{check_accur}]')
     
-    grid_search = GridSearchCV(clf, param_grid=param_grid, cv=5, n_jobs=1)
+    
+    """grid_search = GridSearchCV(clf, param_grid=param_grid, cv=5, n_jobs=1)
 
-    grid_search.fit(X_train, Y_train)
+    grid_search.fit(X_train, Y_train)"""
 
-    st.write(grid_search.score(X_test, Y_test))
-    st.write(grid_search.best_params_)
+    #st.write(grid_search.score(X_test, Y_test))
+    #st.write(grid_search.best_params_)
 
+def use_melody_model(red1, red2, red3, blue1, blue2, blue3, team_stats):
+    model = joblib.load('ml_melody_model.joblib')
+    red_match = []
+    blue_match = []
+    Red1 = team_stats.loc[team_stats['Team Number'] == red1]
+    Red2 = team_stats.loc[team_stats['Team Number'] == red2]
+    Red3 = team_stats.loc[team_stats['Team Number'] == red3]
+    Blue1 = team_stats.loc[team_stats['Team Number'] == blue1]
+    Blue2 = team_stats.loc[team_stats['Team Number'] == blue2]
+    Blue3 = team_stats.loc[team_stats['Team Number'] == blue3]
+    red_spk_avg = Red1['AVG_SPEAKER_TELE'].iloc[0] + Red2['AVG_SPEAKER_TELE'].iloc[0] + Red3['AVG_SPEAKER_TELE'].iloc[0]
+    red_amp_avg = Red1['AVG_AMP_TELE'].iloc[0] + Red2['AVG_AMP_TELE'].iloc[0] + Red3['AVG_AMP_TELE'].iloc[0]
+    red_avg_notes = float(red_spk_avg + red_amp_avg)
+    red_notes_std = float(math.sqrt(pow(Red1['STD_AMP_TELE'].iloc[0],2) + pow(Red2['STD_AMP_TELE'].iloc[0],2) + pow(Red3['STD_AMP_TELE'].iloc[0],2) + pow(Red1['STD_SPEAKER_TELE'].iloc[0],2) + pow(Red2['STD_SPEAKER_TELE'].iloc[0],2) + pow(Red3['STD_SPEAKER_TELE'].iloc[0],2)))    
+    red_match.append([red_avg_notes, red_notes_std])
+    blue_spk_avg = Blue1['AVG_SPEAKER_TELE'].iloc[0] + Blue2['AVG_SPEAKER_TELE'].iloc[0] + Blue2['AVG_SPEAKER_TELE'].iloc[0]
+    blue_amp_avg = Blue1['AVG_AMP_TELE'].iloc[0] + Blue2['AVG_AMP_TELE'].iloc[0] + Blue2['AVG_AMP_TELE'].iloc[0]
+    blue_avg_notes = float(blue_spk_avg + blue_amp_avg)
+    blue_notes_std = float(math.sqrt(pow(Blue1['STD_AMP_TELE'].iloc[0],2) + pow(Blue2['STD_AMP_TELE'].iloc[0],2) + pow(Blue3['STD_AMP_TELE'].iloc[0],2) + pow(Blue1['STD_SPEAKER_TELE'].iloc[0],2) + pow(Blue2['STD_SPEAKER_TELE'].iloc[0],2) + pow(Blue3['STD_SPEAKER_TELE'].iloc[0],2)))
+    blue_match.append([blue_avg_notes, blue_notes_std])
+    red_prediction_melody = model.predict(red_match)
+    if red_prediction_melody == 1:
+        st.write(":red[Red] :green[Melody Achieved]")
+    else:   
+        st.write(":red[Red] :orange[Melody not Achieved]")
+    blue_prediction_melody = model.predict(blue_match)
+    if blue_prediction_melody == 1:
+        st.write(":blue[Blue] :green[Melody Achieved]")
+    else:   
+        st.write(":blue[Blue] :orange[Melody not Achieved]")
 @st.cache_data
 def melody_rp(red1, red2, red3, blue1, blue2, blue3, team_stats):
     Red1 = team_stats.loc[team_stats['Team Number'] == red1]
@@ -494,7 +531,7 @@ def mst_sim_rbt(team, team_stats):
         distance = euclidean_distances(team_vect.values, [comp_team_vec.values])
         team_and_distance = [comp_team, distance, attribute_similarity]
         rankings.append(team_and_distance)  
-    rankings = sorted(rankings, key=lambda x: x[1])[1:5] 
+    rankings = sorted(rankings, key=lambda x: x[1])[0:5] 
     list(map(lambda x: st.write(f':red[{str(x[0])}]', x[1], "Difference Row: ",x[2]), rankings))
 
 
