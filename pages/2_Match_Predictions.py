@@ -13,7 +13,7 @@ st.set_page_config(page_title="Team Statistics and Predictions",
 st.title("Team Statistics")
 
 
-events = ['WACO_2024.csv','Fort Worth (1).csv', 'Custom']
+events = ['WACO_2024.csv','Fort Worth (1).csv', 'State.csv','Custom']
 
 if 'data' not in st.session_state:
     st.session_state.data = 'WACO_2024.csv'  # Set default value
@@ -29,10 +29,8 @@ if Data_Choice == 'Custom':
     try:
         st.session_state.data = Data_Provided
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
-        st.write(data)
         team_stats = cw.team_desc(Data=data)
-    except Exception as error:
-        
+    except:
         st.error("Please Enter Your Data")
 
 else:
@@ -41,7 +39,7 @@ else:
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
         team_stats = cw.team_desc(Data=data)
     except Exception as error:
-      
+        st.write(error)
         st.error("Not Custom")
 
 st.write("""Use a dataset specific to a competition so past results don't skew future results""")
@@ -72,7 +70,11 @@ try:
         elif Red_Pred < Blue_Pred:
             st.write("Prediction: :blue[BLUE]")
         #statistics_accur = cw.test_stats_model(matches, team_stats)
-        st.write(" Waco Statistics Accuracy: ", 0.7435897435897436*100)
+        #st.write("Statistics Accuracy: ", statistics_accur)
+        waco_data = cw.get_clean_data(pd.read_csv('WACO_2024.csv', on_bad_lines='skip'))
+        waco_team_stats = cw.team_desc(Data=waco_data)
+        #cw.ml_melody_model(team_stats=waco_team_stats)
+        #cw.melody_rp(Red1, Red2, Red3, Blue1, Blue2, Blue3, team_stats)
         ############# MACHINE LEARNING PORTION ##########################
         # Find all the events not the custom ones => want to pass this into the ml model as multiple tournaments and matches
         events = [x for x in events if x != 'Custom']
@@ -95,7 +97,7 @@ try:
         user_stats = cw.ml_clean([st.session_state.data])
         cw.use_model(Red_Teams, Blue_Teams,user_stats, accur_ml)#, accur_nn
         st.write("Beware lack of data may lead to underrepresentation for a robot, so reference both models")
-        st.write(""" Once a ample amount of data is acquired you can prioritize the the machine learning model, and disregard the statistics model""")
+        st.write(""" Once a ample amount of data is acquired you can prioritize both of the the machine learning models""")
         # WACO ACCURACY
         waco_team_stats = cw.ml_clean(['WACO_2024.csv'])
         waco_matches = ['waco_matches.txt']
@@ -112,16 +114,15 @@ try:
         fw_accur = cw.test_model(X_train,Y_train)
         st.write(":green[Fort Worth Accuracy]", fw_accur * 100)
         #Predictive of all stats
-        
-
+        #cw.ml_melody_model(team_stats=team_stats)
+        #cw.use_melody_model(Red1,Red2,Red3,Blue1,Blue2,Blue3,team_stats=team_stats)
     except Exception as error:
-      
+      st.write(error)
       st.write("""# Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction.""")
         
     
 
-except Exception as error:
-    
+except:
     pass
 
 
