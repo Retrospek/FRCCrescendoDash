@@ -19,7 +19,7 @@ if 'data' not in st.session_state:
 if st.session_state.data not in events:
     st.session_state.data = 'WACO_2024.csv'
 
-Data_Choice = st.selectbox(':red[Please Select Relevant DataSet]', events, index = events.index(st.session_state.data))
+Data_Choice = st.selectbox('DataSet:', events, index = events.index(st.session_state.data))
 
 if Data_Choice == 'Custom':
     Data_Provided = st.file_uploader("Your DataSet")
@@ -38,6 +38,7 @@ else:
     except:
         st.error("Not Custom")
 
+st.dataframe(data.loc[data['team_#'] == 2468])
 
 #test = "WACO_2024.csv"
 try:
@@ -69,6 +70,7 @@ try:
         most_sim_robo = st.selectbox("Team Similar to the one Provided: ",options=team_stats['Team Number'].unique())
         cw.mst_sim_rbt(most_sim_robo, team_stats)
 
+    
         
 
     
