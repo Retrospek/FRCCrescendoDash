@@ -23,6 +23,7 @@ if st.session_state.data not in events:
     st.session_state.data = 'WACO_2024.csv'
 
 Data_Choice = st.selectbox('DataSet:', events, index = events.index(st.session_state.data))
+
 if Data_Choice == 'Custom':
     Data_Provided = st.file_uploader("Your DataSet")
     try:
@@ -30,14 +31,14 @@ if Data_Choice == 'Custom':
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
         team_stats = cw.team_desc(Data=data)
     except:
-        pass
+        st.error("Please Enter Your Data")
+
 else:
     st.session_state.data = Data_Choice
     try:
         data = cw.get_clean_data(pd.read_csv(st.session_state.data, on_bad_lines='skip'))
         team_stats = cw.team_desc(Data=data)
     except Exception as error:
-        st.write(error)
         st.error("Not Custom")
 
 st.write("""Use a dataset specific to a competition so past results don't skew future results""")
@@ -45,7 +46,7 @@ st.write("""Use a dataset specific to a competition so past results don't skew f
 event_matches = ['waco_matches.txt', 'fort_worth_matches.txt']
 matches = cw.get_matches_cleaned(event_matches) #get all the match txt files into a dataframe format inside of a list     
 #-------
-
+txchamps_matches = cw.get_matches_cleaned(['tx_champs.txt'])
 
 st.sidebar.header("Team Select")
 #test = "WACO_2024.csv"
@@ -67,8 +68,11 @@ try:
             st.write("Prediction: :red[RED]")
         elif Red_Pred < Blue_Pred:
             st.write("Prediction: :blue[BLUE]")
-        #statistics_accur = cw.test_stats_model(matches, team_stats)
-        #st.write("Statistics Accuracy: ", statistics_accur)
+        #st.write(data.columns)
+        #st.dataframe(data.loc[data['team_#'] == 2468][['tele_pass_source', 'tele_pass_midfield', 'tele_spk_scored', 'tele_amp_scored']])
+        #
+        statistics_accur = cw.test_stats_model(txchamps_matches, team_stats)
+        st.write("Statistics Accuracy: ", statistics_accur)
         waco_data = cw.get_clean_data(pd.read_csv('WACO_2024.csv', on_bad_lines='skip'))
         waco_team_stats = cw.team_desc(Data=waco_data)
         #cw.ml_melody_model(team_stats=waco_team_stats)
@@ -111,6 +115,14 @@ try:
         X_train, Y_train = cw.ml_data(fw_matches, fw_team_stats)
         fw_accur = cw.test_model(X_train,Y_train)
         st.write(":green[Fort Worth Accuracy]", fw_accur * 100)
+    
+        #Champs Accuracy
+        tx_champs_stats = cw.ml_clean(['State.csv'])
+        chmp_matches = ['tx_champs.txt']
+        champ_matches = cw.get_matches_cleaned(chmp_matches)
+        X_train, Y_train = cw.ml_data(champ_matches, tx_champs_stats)
+        chmp_accur = cw.test_model(X_train,Y_train)
+        st.write(":green[STECHMP Accuracy]", chmp_accur * 100)
         #Predictive of all stats
         #cw.ml_melody_model(team_stats=team_stats)
         #cw.use_melody_model(Red1,Red2,Red3,Blue1,Blue2,Blue3,team_stats=team_stats)
