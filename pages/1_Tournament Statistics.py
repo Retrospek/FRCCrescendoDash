@@ -10,7 +10,7 @@ st.set_page_config(page_title="Tournament Statistics and Predictions",
 
 st.title("Tournament Statistics")
 
-events = ['WACO_2024.csv','Fort Worth (1).csv', 'Custom']
+events = ['WACO_2024.csv','Fort Worth (1).csv', 'State.csv', 'Custom']
 
 if 'data' not in st.session_state:
     st.session_state.data = 'WACO_2024.csv'  # Set default value
@@ -38,14 +38,12 @@ else:
     except:
         st.error("Not Custom")
 
-st.dataframe(data.loc[data['team_#'] == 2468])
+
 
 #test = "WACO_2024.csv"
 try:
-   
+
     bubble = cw.plot(team_stats=team_stats) #plot
-
-
 
     st.write('''This page is dedicated to analyzing teams through match predictions satatistic based calculations, 
             and other methods of choosing the right alliance partner''')
@@ -54,7 +52,26 @@ try:
 
     st.write('''Using this bubble plot we can see that teams that tend to have more wins for total games have a higher average amp scored ''')
 
-    teams = st.multiselect("Specific Team Stats", options=team_stats['Team Number'].unique())
+    match_info = st.sidebar.selectbox("Match Info", options=team_stats['Team Number'].unique())
+    
+    static_attributes = ['team_#', 'match_#', 'auto_amp_scored', 'auto_spk_scored', 'endgame_stage_actions','endgame_trap_scored', 'tele_amp_scored', 'tele_spk_scored']
+    
+
+    try:
+        match_table = data.loc[data['team_#'] == int(match_info)][static_attributes + ['tele_feeded']]
+    except Exception as error:
+        try:
+            match_table = data.loc[data['team_#'] == int(match_info)][static_attributes + ['tele_pass_source','tele_pass_midfield']]
+        except Exception as error:
+            pass
+    
+    with st.expander(f":red[Match Info for {match_info}]"):
+        st.dataframe(match_table.sort_values('match_#'))
+
+
+    st.markdown("# :blue[Specific Team Statistics]")
+
+    teams = st.sidebar.multiselect("Specific Team Stats", options=team_stats['Team Number'].unique())
 
     teamstat = team_stats[team_stats['Team Number'].isin(teams)]
 
@@ -62,14 +79,12 @@ try:
 
     teamstat.drop('Score Variability', axis=1)
 
-    st.markdown("# :blue[Specific Team Statistics]")
-
     st.dataframe(teamstat.style.highlight_max(axis=0))
 
     with st.expander("# Similar Team List"):
         most_sim_robo = st.selectbox("Team Similar to the one Provided: ",options=team_stats['Team Number'].unique())
         cw.mst_sim_rbt(most_sim_robo, team_stats)
-
+        
     
         
 
