@@ -127,7 +127,6 @@ try:
         #cw.ml_melody_model(team_stats=team_stats)
         #cw.use_melody_model(Red1,Red2,Red3,Blue1,Blue2,Blue3,team_stats=team_stats)
     except Exception as error:
-      st.write(error)
       st.write("""# Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction.""")
         
     
