@@ -183,7 +183,7 @@ def match_prediction(team_stats, Red1, Red2, Red3, Blue1, Blue2, Blue3):
 ##################################################################################
 ##################################################################################
 ######## MACHINE LEARNING SECTION FROM HERE ON OUT ML SECTION ####################
-@st.cache_data
+#@st.cache_data
 def ml_clean(events):
     event_stats = []
     for event in events:
@@ -205,7 +205,7 @@ def ml_clean(events):
         event_stats.append(full_data)
     return event_stats
         #st.dataframe(X)
-@st.cache_data
+#@st.cache_data
 def get_matches_cleaned(events):
     total_df = []
     for event in events:
@@ -348,7 +348,7 @@ def test_model(X_TRAIN, Y_TRAIN):
     accuracy = accuracy_score(Y_TRAIN, prediction)
     st.write(accuracy)
     return accuracy
-@st.cache_data
+#@st.cache_data
 def test_stats_model(matches, team_stats):
     successes = 0
     waco = matches[0]
