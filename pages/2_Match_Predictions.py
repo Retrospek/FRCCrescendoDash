@@ -71,8 +71,8 @@ try:
         #st.write(data.columns)
         #st.dataframe(data.loc[data['team_#'] == 2468][['tele_pass_source', 'tele_pass_midfield', 'tele_spk_scored', 'tele_amp_scored']])
         #
-        statistics_accur = cw.test_stats_model(txchamps_matches, team_stats)
-        st.write("Statistics Accuracy: ", statistics_accur)
+        #statistics_accur = cw.test_stats_model(txchamps_matches, team_stats)
+        #st.write("Statistics Accuracy: ", statistics_accur)
         waco_data = cw.get_clean_data(pd.read_csv('WACO_2024.csv', on_bad_lines='skip'))
         waco_team_stats = cw.team_desc(Data=waco_data)
         #cw.ml_melody_model(team_stats=waco_team_stats)
