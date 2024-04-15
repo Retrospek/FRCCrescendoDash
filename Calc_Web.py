@@ -205,7 +205,7 @@ def ml_clean(events):
         event_stats.append(full_data)
     return event_stats
         #st.dataframe(X)
-#@st.cache_data
+@st.cache_data
 def get_matches_cleaned(events):
     total_df = []
     for event in events:
@@ -277,34 +277,35 @@ def ml_data(all_matches, ml_team_stats):
             x_train.append(difference)
             y_train.append(result)
     return x_train, y_train
-@st.cache_data
+#@st.cache_data
 def ml_model(X_TRAIN, Y_TRAIN): 
     #kf = KFold(n_splits=5, shuffle=True)
-    gb_clf = GradientBoostingClassifier(n_estimators=13, learning_rate=0.3, random_state=42)
+    
     X_train, X_test, y_train, y_test = train_test_split(X_TRAIN, Y_TRAIN, test_size=0.2, random_state=90)#90, 61, 73 randomstate good, 
-    #accuracies = []
-
     knn = SVC(kernel='linear', C=20)
     knn.fit(X_train, y_train)
     y_pred = knn.predict(X_train)
-    #st.write(accuracy_score(y_train,y_pred))
+    st.write(accuracy_score(y_train,y_pred))
 
+    gb_clf = GradientBoostingClassifier(n_estimators=13, learning_rate=0.3, random_state=42)
+    #accuracies = []
     gb_clf.fit(X_train, y_train)
     y_pred = gb_clf.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
-    joblib.dump(gb_clf, 'new_tourney_2.joblib')
+    joblib.dump(gb_clf, 'new_tourney_3.joblib')
 
-    loaded_model = joblib.load('new_tourney_2.joblib')
+    loaded_model = joblib.load('new_tourney_3.joblib')
 
     y_pred_two = loaded_model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred_two)
+    st.write(accuracy)
     return accuracy
     
 def use_model(Red_teams, Blue_teams, stats_teams, accur_ml):
     stand_teams = pd.DataFrame(columns=stats_teams[0].columns)
     for i in range(len(stats_teams)):                       
         stand_teams = pd.concat([stand_teams,stats_teams[i]], ignore_index=True)
-    ml_loaded_model = joblib.load('new_tourney_2.joblib')
+    ml_loaded_model = joblib.load('new_tourney_3.joblib')
     #nn_loaded_model = load_model('neuralnet.h5')
     Red1 = stand_teams.loc[stand_teams['Team Number'] == Red_teams[0]]
     Red2 = stand_teams.loc[stand_teams['Team Number'] == Red_teams[1]]
@@ -342,9 +343,10 @@ def use_model(Red_teams, Blue_teams, stats_teams, accur_ml):
         st.write('Prediction: :blue[BLUE]')
 #@st.cache_data
 def test_model(X_TRAIN, Y_TRAIN):
-    model = joblib.load('new_tourney_2.joblib')
+    model = joblib.load('new_tourney_3.joblib')
     prediction = model.predict(X_TRAIN)
     accuracy = accuracy_score(Y_TRAIN, prediction)
+    st.write(accuracy)
     return accuracy
 @st.cache_data
 def test_stats_model(matches, team_stats):
