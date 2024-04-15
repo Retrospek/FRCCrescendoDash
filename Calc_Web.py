@@ -205,7 +205,7 @@ def ml_clean(events):
         event_stats.append(full_data)
     return event_stats
         #st.dataframe(X)
-@st.cache_data
+#@st.cache_data
 def get_matches_cleaned(events):
     total_df = []
     for event in events:
@@ -228,7 +228,7 @@ def get_matches_cleaned(events):
 
         total_df.append(matches)
     return total_df
-@st.cache_data
+#@st.cache_data
 def ml_data(all_matches, ml_team_stats):
     x_train = []
     y_train = []
@@ -340,7 +340,7 @@ def use_model(Red_teams, Blue_teams, stats_teams, accur_ml):
         st.write('Prediction: :red[RED]') 
     else:
         st.write('Prediction: :blue[BLUE]')
-@st.cache_data
+#@st.cache_data
 def test_model(X_TRAIN, Y_TRAIN):
     model = joblib.load('new_tourney_2.joblib')
     prediction = model.predict(X_TRAIN)
