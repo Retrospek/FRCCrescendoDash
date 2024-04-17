@@ -42,15 +42,16 @@ else:
 
 #test = "WACO_2024.csv"
 try:
-
-    bubble = cw.plot(team_stats=team_stats) #plot
-
     st.write('''This page is dedicated to analyzing teams through match predictions satatistic based calculations, 
             and other methods of choosing the right alliance partner''')
 
-    st.plotly_chart(bubble)
 
-    st.write('''Using this bubble plot we can see that teams that tend to have more wins for total games have a higher average amp scored ''')
+    with st.expander(":red[Bubble Plot of Averages and Wins]"):
+        bubble = cw.plot(team_stats=team_stats) #plot
+        st.plotly_chart(bubble)
+        st.write('''Using this bubble plot we can see that teams that tend to have more wins for total games have a higher average amp scored ''')
+
+    
 
     match_info = st.sidebar.selectbox("Match Info", options=team_stats['Team Number'].unique())
     
@@ -81,7 +82,7 @@ try:
 
     st.dataframe(teamstat.style.highlight_max(axis=0))
 
-    with st.expander("# Similar Team List"):
+    with st.expander("# :red[Similar Team List]"):
         most_sim_robo = st.selectbox("Team Similar to the one Provided: ",options=team_stats['Team Number'].unique())
         cw.mst_sim_rbt(most_sim_robo, team_stats)
         
@@ -95,6 +96,5 @@ try:
     ############
 
     
-
 except:
   pass
