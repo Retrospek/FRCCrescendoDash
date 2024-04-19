@@ -3,7 +3,7 @@ import numpy as np
 import math
 import re
 import os
-import statbotics
+#import statbotics
 import matplotlib.pyplot as plt
 import random
 import scipy.integrate as integrate
