@@ -13,7 +13,7 @@ st.set_page_config(page_title="Team Statistics and Predictions",
 st.title("Team Statistics")
 
 
-events = ['WACO_2024.csv','Fort Worth (1).csv', 'State.csv','Custom']
+events = ['WACO_2024.csv','Fort Worth (1).csv', 'State.csv', 'CMP.csv','Custom']
 
 if 'data' not in st.session_state:
     st.session_state.data = 'WACO_2024.csv'  # Set default value
@@ -87,19 +87,20 @@ try:
         #Blue_Teams  # List of blue teams that are in a match
         #-------
         # Let's create our ml statistic dataframes that has the attributes that I care about for the model
-        ml_team_stats = cw.ml_clean(events) #Stores the team_statistics for each tournament in a list for the ml data
+#        ml_team_stats = cw.ml_clean(events) #Stores the team_statistics for each tournament in a list for the ml data
                     #training_data = cw.get_clean_data(pd.read_csv('combine.csv', on_bad_lines='skip'))
                     #training_stats = cw.team_desc(training_data)
         #-------
-        
         # ALL TOURNMENT ACCURACY
-        x_train, y_train = cw.ml_data(matches, ml_team_stats)
-        accur_ml = cw.ml_model(X_TRAIN=x_train, Y_TRAIN=y_train )
+#        x_train, y_train = cw.ml_data(matches, ml_team_stats)
+#        accur_ml = cw.ml_model(X_TRAIN=x_train, Y_TRAIN=y_train )
         #accur_nn = cw.neural_net(X_TRAIN=x_train, Y_TRAIN=y_train)
-        user_stats = cw.ml_clean([st.session_state.data])
-        cw.use_model(Red_Teams, Blue_Teams,user_stats, accur_ml)#, accur_nn
-        st.write("Beware lack of data may lead to underrepresentation for a robot, so reference both models")
-        st.write(""" Once a ample amount of data is acquired you can prioritize both of the the machine learning models""")
+#        user_stats = cw.ml_clean([st.session_state.data])
+#        cw.use_model(Red_Teams, Blue_Teams,user_stats, accur_ml)#, accur_nn
+#        st.write("Beware lack of data may lead to underrepresentation for a robot, so reference both models")
+#        st.write(""" Once a ample amount of data is acquired you can prioritize both of the the machine learning models""")
+        
+        
         # WACO ACCURACY
         waco_team_stats = cw.ml_clean(['WACO_2024.csv'])
         waco_matches = ['waco_matches.txt']
@@ -117,21 +118,45 @@ try:
         st.write(":green[Fort Worth Accuracy]", fw_accur * 100)
     
         #Champs Accuracy
-        tx_champs_stats = cw.ml_clean(['State.csv'])
-        chmp_matches = ['tx_champs.txt']
-        champ_matches = cw.get_matches_cleaned(chmp_matches)
-        X_train, Y_train = cw.ml_data(champ_matches, tx_champs_stats)
-        chmp_accur = cw.test_model(X_train,Y_train)
-        st.write(":green[STECHMP Accuracy]", chmp_accur * 100)
+        #tx_champs_stats = cw.ml_clean(['State.csv'])
+        #chmp_matches = ['tx_champs.txt']
+        #champ_matches = cw.get_matches_cleaned(chmp_matches)
+        #X_train, Y_train = cw.ml_data(champ_matches, tx_champs_stats)
+        #chmp_accur = cw.test_model(X_train,Y_train)
+        #st.write(":green[STECHMP Accuracy]", chmp_accur * 100)
         #Predictive of all stats
         #cw.ml_melody_model(team_stats=team_stats)
         #cw.use_melody_model(Red1,Red2,Red3,Blue1,Blue2,Blue3,team_stats=team_stats)
+
+        #New Model
+        ml_team_stats = cw.ml_clean(['CMP.csv']) #Stores the team_statistics for each tournament in a list for the ml data
+                    #training_data = cw.get_clean_data(pd.read_csv('combine.csv', on_bad_lines='skip'))
+                    #training_stats = cw.team_desc(training_data)
+        #-------
+        # ALL TOURNMENT ACCURACY
+        matches = cw.get_matches_cleaned(['w_chp_matches.txt'])
+        x_train, y_train = cw.ml_data(matches, ml_team_stats)
+        accur_ml = cw.ml_model(X_TRAIN=x_train, Y_TRAIN=y_train )
+        #accur_nn = cw.neural_net(X_TRAIN=x_train, Y_TRAIN=y_train)
+        user_stats = cw.ml_clean([st.session_state.data])
+        cw.use_model(Red_Teams, Blue_Teams,user_stats, accur_ml)#, accur_nn
+
+        #World Champs Accuracy
+        w_champs_stats = cw.ml_clean(['CMP.csv'])
+        wchmp_matches = ['w_chp_matches.txt']
+        wchamp_matches = cw.get_matches_cleaned(wchmp_matches)
+        #st.write(w_champs_stats[0])
+        #st.write(wchamp_matches)
+        X_train, Y_train = cw.ml_data(wchamp_matches, w_champs_stats)
+        wchmp_accur = cw.test_model(X_train,Y_train)
+        st.write(":green[WCHMP Accuracy]", wchmp_accur * 100)
+
     except Exception as error:
       st.write("""# Please enter 3 teams for the red alliance, and 3 teams for the blue alliance to get a prediction.""")
         
     
 
-except:
+except Exception as error:
     pass
 
 
