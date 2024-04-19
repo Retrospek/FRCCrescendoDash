@@ -319,7 +319,7 @@ def use_model(Red_teams, Blue_teams, stats_teams, accur_ml):
     stand_teams = pd.DataFrame(columns=stats_teams[0].columns)
     for i in range(len(stats_teams)):                       
         stand_teams = pd.concat([stand_teams,stats_teams[i]], ignore_index=True)
-    ml_loaded_model = joblib.load('new_tourney_5.joblib')
+    ml_loaded_model = joblib.load('goat_model.joblib')
     #nn_loaded_model = load_model('neuralnet.h5')
     Red1 = stand_teams.loc[stand_teams['Team Number'] == Red_teams[0]]
     Red2 = stand_teams.loc[stand_teams['Team Number'] == Red_teams[1]]
